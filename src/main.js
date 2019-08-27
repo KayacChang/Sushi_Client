@@ -34,8 +34,8 @@ async function main() {
         app.service = new Service(key);
 
         // Import Load Scene
-        const LoadScene = await import('./game/scenes/load/scene');
-        await app.resource.load(LoadScene);
+        // const LoadScene = await import('./game/scenes/load/scene');
+        // await app.resource.load(LoadScene);
 
         const comp = select('#app');
         const svg = select('#preload');
@@ -43,33 +43,33 @@ async function main() {
 
         comp.prepend(app.view);
 
-        const loadScene = LoadScene.create();
-        app.stage.addChild(loadScene);
-        app.resize();
+        // const loadScene = LoadScene.create();
+        // app.stage.addChild(loadScene);
+        // app.resize();
 
         enableFullScreenMask();
 
         await app.service.login({key});
 
         //  Import Main Scene
-        const [Interface, MainScene, initData] =
+        const [MainScene, initData] =
             await Promise.all([
-                import('./game/interface'),
+                // import('./game/interface'),
                 import('./game/scenes/main'),
 
                 app.service.init({key}),
             ]);
 
-        await app.resource.load(Interface, MainScene);
+        await app.resource.load(MainScene);
 
         const scene = MainScene.create(initData);
-        const ui = Interface.create();
+        // const ui = Interface.create();
 
-        scene.addChild(ui);
+        // scene.addChild(ui);
 
         app.stage.addChildAt(scene, 0);
 
-        app.stage.removeChild(loadScene);
+        // app.stage.removeChild(loadScene);
 
         select('script').forEach((el) => el.remove());
 
