@@ -1,9 +1,9 @@
 import {property} from './Slot';
 
 export function Symbol(view, index, symbols) {
-    const offsetY = Number(symbols[0].y);
+    const offsetX = Number(symbols[0].x);
 
-    const stepSize = Math.abs(offsetY / property.stepPerSymbol);
+    const stepSize = Math.abs(offsetX / property.stepPerSymbol);
 
     let pos = index;
 
@@ -18,7 +18,7 @@ export function Symbol(view, index, symbols) {
         set pos(newPos) {
             pos = newPos;
 
-            view.y = offsetY + (pos * stepSize);
+            view.x = offsetX + (pos * stepSize);
         },
 
         get x() {
@@ -40,6 +40,13 @@ export function Symbol(view, index, symbols) {
         },
         set texture(newTexture) {
             view.texture = newTexture;
+        },
+
+        get icon() {
+            return property.textures.find(view.texture);
+        },
+        set icon(newIcon) {
+            view.texture = property.textures.get(newIcon);
         },
     };
 }

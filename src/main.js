@@ -4,7 +4,7 @@ import 'regenerator-runtime/runtime';
 import {select, fetchJSON, isDevMode} from '@kayac/utils';
 
 import {App} from './system/application';
-import {Service} from './service/01';
+// import {Service} from './service/01';
 
 import {enableFullScreenMask} from './system/modules/screen';
 
@@ -31,7 +31,7 @@ async function main() {
 
         global.app = App();
 
-        app.service = new Service(key);
+        // app.service = new Service(key);
 
         // Import Load Scene
         // const LoadScene = await import('./game/scenes/load/scene');
@@ -49,20 +49,20 @@ async function main() {
 
         enableFullScreenMask();
 
-        await app.service.login({key});
+        // await app.service.login({key});
 
         //  Import Main Scene
-        const [MainScene, initData] =
+        const [MainScene, ] =
             await Promise.all([
                 // import('./game/interface'),
                 import('./game/scenes/main'),
 
-                app.service.init({key}),
+                // app.service.init({key}),
             ]);
 
         await app.resource.load(MainScene);
 
-        const scene = MainScene.create(initData);
+        const scene = MainScene.create();
         // const ui = Interface.create();
 
         // scene.addChild(ui);
