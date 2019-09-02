@@ -8,7 +8,6 @@ export function Main(it) {
 
     MenuButton({
         normal: view.getChildByName('menu@normal'),
-        hover: view.getChildByName('menu@hover'),
 
         async onClick() {
             await it.menu.open();

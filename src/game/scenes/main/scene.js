@@ -4,6 +4,7 @@ import {Slot, Conveyor} from './components';
 import {spin} from './logic/anim';
 
 import {symbolConfig} from './data';
+import {logic} from "./logic";
 
 const normalTable = [
     // eslint-disable-next-line max-len
@@ -50,7 +51,7 @@ export function create() {
 
     const reelStrips = preprocess(normalTable);
 
-    global.slot = Slot({
+    const slot = Slot({
         view: scene,
         reelStrips: reelStrips,
         textures: symbolConfig,
@@ -72,15 +73,19 @@ export function create() {
     window.bonus = scene.getChildByName('bonus');
     window.bigWin = scene.getChildByName('bigWin');
 
+    logic({
+        slot,
+    });
+
     return scene;
 
     function whenSlotStateChange(reels) {
         for (const reel of reels) {
-            const conveyor = conveyors[reel.index];
-
             reel.once('StateChange', onReelStateChange);
 
             function onReelStateChange(state) {
+                const conveyor = conveyors[reel.index];
+
                 return (
                     (state === 'spin') ? conveyor.start() :
                         (state === 'stop') ? conveyor.stop() :

@@ -3,6 +3,7 @@ import {fadeIn, fadeOut, twink} from '../../effect';
 import {Nav} from './Nav';
 import {Exchange} from './Exchange';
 import {Setting} from './Setting';
+import {Information} from './Information';
 
 export function Menu(it) {
     const background = Background(it.getChildByName('background'));
@@ -11,7 +12,7 @@ export function Menu(it) {
 
     const exchange = Exchange(it.getChildByName('exchange'));
     const setting = Setting(it.getChildByName('setting'));
-    const information = Setting(it.getChildByName('information'));
+    const information = Information(it.getChildByName('information'));
 
     const pages = {
         exchange,

@@ -1,6 +1,6 @@
 import {log, table} from '@kayac/utils';
 
-import {NormalGame, ReSpinGame} from './flow';
+// import {NormalGame, ReSpinGame} from './flow';
 
 // const BET_TO_BIGWIN = 10;
 //
@@ -15,9 +15,9 @@ export function logic({slot}) {
         log('onGameResult =============');
         table(result);
 
-        const {
-            normalGame,
-        } = result;
+        // const {
+        //     normalGame,
+        // } = result;
 
         log('Round Complete...');
         app.emit('Idle');
