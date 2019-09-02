@@ -17,14 +17,18 @@ export function Reel(view) {
     const symbols =
         view.children
             .filter(isSymbol)
-            .sort((a, b) => a.y - b.y)
+            .sort((a, b) => a.x - b.x)
             .map(Symbol);
 
     const strip = Strip(property.reelStrips[index]);
 
+    const buffer = [];
+
     let pos = 0;
 
     let state = State.Idle;
+
+    let anim = undefined;
 
     const reel = {
         get index() {
@@ -35,15 +39,13 @@ export function Reel(view) {
             return symbols;
         },
 
-        get strip() {
-            return strip;
-        },
-
         get state() {
             return state;
         },
         set state(newState) {
             state = newState;
+
+            return view.emit('StateChange', state);
         },
 
         get pos() {
@@ -54,10 +56,46 @@ export function Reel(view) {
 
             update(reel, newPos);
         },
+
+        get anim() {
+            return anim;
+        },
+        set anim(newAnim) {
+            anim = newAnim;
+        },
+
+        push(...icons) {
+            const textures =
+                icons.map((icon) => property.textures.get(icon));
+
+            buffer.push(...textures);
+        },
+
+        next() {
+            if (buffer.length) return buffer.pop();
+
+            return strip.next().value;
+        },
+
+        on(event, listener) {
+            return view.on(event, listener);
+        },
+
+        once(event, listener) {
+            return view.once(event, listener);
+        },
+
+        off(event, listener) {
+            return view.off(event, listener);
+        },
+
+        emit(event, ...args) {
+            return view.emit(event, ...args);
+        },
     };
 
     symbols
-        .forEach((symbol) => symbol.texture = strip.next().value);
+        .forEach((symbol) => symbol.texture = reel.next());
 
     return reel;
 }

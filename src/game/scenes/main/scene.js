@@ -1,6 +1,6 @@
 import {addPackage} from 'pixi_fairygui';
 
-import {Slot} from './components';
+import {Slot, Conveyor} from './components';
 import {spin} from './logic/anim';
 
 import {symbolConfig} from './data';
@@ -40,13 +40,15 @@ function preprocess(table) {
     return result;
 }
 
+function isConveyor({name}) {
+    return name.includes('conveyor');
+}
+
 export function create() {
     const create = addPackage(app, 'main');
     const scene = create('MainScene');
 
     const reelStrips = preprocess(normalTable);
-
-    console.log(reelStrips);
 
     global.slot = Slot({
         view: scene,
@@ -54,10 +56,38 @@ export function create() {
         textures: symbolConfig,
     });
 
-    window.spin = () => spin({
+    window.spin = (symbols) => spin({
         reels: slot.reels,
+        symbols,
     });
 
+    const conveyors =
+        scene.children
+            .filter(isConveyor)
+            .map(Conveyor);
+
+    app.on('SpinStart', whenSlotStateChange);
+    app.on('SpinStop', whenSlotStateChange);
+
+    window.bonus = scene.getChildByName('bonus');
+    window.bigWin = scene.getChildByName('bigWin');
+
     return scene;
+
+    function whenSlotStateChange(reels) {
+        for (const reel of reels) {
+            const conveyor = conveyors[reel.index];
+
+            reel.once('StateChange', onReelStateChange);
+
+            function onReelStateChange(state) {
+                return (
+                    (state === 'spin') ? conveyor.start() :
+                        (state === 'stop') ? conveyor.stop() :
+                            undefined
+                );
+            }
+        }
+    }
 }
 

@@ -18,7 +18,6 @@ export const property = {
 };
 
 export const State = freeze({
-    Idle: 'idle',
     Spin: 'spin',
     Stop: 'stop',
 });

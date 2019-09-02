@@ -14,30 +14,27 @@ export async function spin({reels, symbols}) {
 
     await duration();
 
-    await stop(reels);
+    await stop(reels, symbols);
 }
 
 async function start(reels) {
-    app.emit('SpinStart');
+    app.emit('SpinStart', reels);
 
     for (const reel of reels) {
         reel.state = State.Spin;
 
-        anime
-            .timeline({
-                targets: reel,
-                easing: 'easeOutQuad',
-            })
-            .add({
-                pos: '-=' + 0.25,
-                duration: 250,
-            })
-            .add({
-                pos: '+=' + 220,
-                duration: 30000,
-            });
+        reel.anim =
+            anime
+                .timeline({
+                    targets: reel,
+                    easing: 'linear',
+                })
+                .add({
+                    pos: '+=' + 220,
+                    duration: 34000,
+                });
 
-        await wait(120);
+        await wait(360);
     }
 }
 
@@ -58,45 +55,46 @@ async function duration() {
     }
 }
 
-async function stop(reels, ) {
-    app.emit('SpinStop');
+async function stop(reels, symbols) {
+    app.emit('SpinStop', reels);
 
     for (const reel of reels) {
-        reel.state = State.Stop;
-
-        anime.remove(reel);
+        reel.anim.pause();
 
         const [offSet, ...display] =
             reel.symbols
                 .concat()
                 .sort(byPos);
 
-        // setDisplay(display, symbols[reel.index]);
+        reel.push(...symbols[reel.index]);
 
-        reel.pos -= offSet.pos;
+        reel.state = State.Stop;
 
-        await anime({
-            targets: reel,
-            pos: '+=' + 2,
-            easing: 'easeOutBack',
-            duration: 360,
+        await anime
+            .timeline({
+                targets: reel,
 
-            begin() {
-                app.emit('ReelStop', reel);
-            },
-        })
+                complete() {
+                    app.emit('ReelStop', reel);
+                },
+            })
+            .add({
+                easing: 'linear',
+                pos: '+=' + display.length,
+                duration: 1000,
+            })
+            .add({
+                pos: '-=' + offSet.pos,
+                duration: 500,
+            })
             .finished;
 
-        reel.state = State.Idle;
+        reel.anim = undefined;
     }
 
     app.emit('SpinEnd');
 
     function byPos(a, b) {
         return a.pos - b.pos;
-    }
-
-    function setDisplay(display, result) {
-        result.forEach((icon, index) => display[index].icon = icon);
     }
 }
