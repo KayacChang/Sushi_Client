@@ -1,87 +1,88 @@
-import {symbolConfig} from '../../data';
+import {wait} from '@kayac/utils';
 
-import {randomInt, wait} from '@kayac/utils';
-
-export async function show(effects, result) {
+export async function show({result, reels, grid, payLine}) {
     app.emit('ShowResult', result);
 
-    const {symbols} = result;
+    const {results} = result;
 
-    symbols.forEach((id, index) => {
-        const effect = effects[index];
+    const lines = [];
 
-        const name = getSymbolNameBy(id);
+    const effects = [];
 
-        if (name === 'empty') return;
+    const hideSymbols = [];
 
-        return (
-            (name.includes('wild')) ? wild :
-                (name.includes('alien')) ? alien :
-                    normal
-        )(effect, name);
-    });
+    results.forEach(showOne);
 
-    await wait(2000);
-}
+    //  Show Result Complete...
+    await wait(1750);
 
-function getSymbolNameBy(icon) {
-    return symbolConfig
-        .find(({id}) => id === icon)
-        .name;
-}
+    close();
 
-function normal(effect, name) {
-    const target = effect.getChildByName(name);
+    app.once('Idle', onIdle);
 
-    const animation = target.transition['anim'];
+    app.once('SpinStart', close);
 
-    animation.loop = true;
+    function* getResultGen() {
+        while (true) {
+            for (const result of results) {
+                yield result;
+            }
+        }
+    }
 
-    play(target, animation);
-}
+    async function onIdle() {
+        const results = getResultGen();
 
-function wild(effect, name) {
-    const [_name, anim] = name.split('@');
+        let looping = undefined;
 
-    const target = effect.getChildByName(_name);
-    const animation = target.transition[anim];
+        (
+            function loop() {
+                close();
 
-    target.getChildByName('combo')
-        .children
-        .forEach((view) => view.visible = false);
+                showOne(results.next().value);
 
-    play(target, animation);
-}
+                looping = setTimeout(() => requestAnimationFrame(loop), 1750);
+            }
+        )();
 
-function alien(effect, name) {
-    const target = effect.getChildByName(name);
+        app.once('SpinStart', () => clearTimeout(looping));
+    }
 
-    const animation = target.transition['anim'];
+    function showOne({line, positions, symbols}) {
+        positions.forEach((col, row) => {
+            //
+            if (col === undefined) return;
 
-    const alien = target.getChildByName('alien');
+            const effect =
+                grid[row][col]
+                    .getChildByName(String(symbols[row]));
 
-    const expression = alien.transition[randomInt(4)];
+            effect.alpha = 1;
 
-    expression.loop = true;
-    animation.loop = true;
+            effect.transition['anim'].restart();
 
-    expression.restart();
+            effects.push(effect);
 
-    play(target, animation);
+            const symbol = reels[col].displaySymbols[row];
 
-    app.on('SpinStart', () => {
-        expression.loop = undefined;
-        expression.pause();
-    });
-}
+            symbol.visible = false;
 
-function play(target, anim) {
-    target.visible = true;
-    anim.restart();
+            hideSymbols.push(symbol);
+            //
+        });
 
-    app.on('SpinStart', () => {
-        target.visible = false;
-        anim.loop = undefined;
-        anim.pause();
-    });
+        if (line !== -1) lines.push(payLine.show(line));
+    }
+
+    function close() {
+        lines.forEach((close) => close());
+
+        hideSymbols.forEach((symbol) => symbol.visible = true);
+
+        effects.forEach((effect) => {
+            effect.alpha = 0;
+
+            effect.transition['anim'].pause();
+        });
+    }
 }

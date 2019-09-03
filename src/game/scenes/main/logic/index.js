@@ -1,6 +1,6 @@
 import {log, table} from '@kayac/utils';
 
-// import {NormalGame, ReSpinGame} from './flow';
+import {NormalGame} from './flow';
 
 // const BET_TO_BIGWIN = 10;
 //
@@ -8,16 +8,52 @@ import {log, table} from '@kayac/utils';
 //     return divide(scores, app.user.currentBet) > BET_TO_BIGWIN;
 // }
 
-export function logic({slot}) {
+export function preprocess(data) {
+    const result = [
+        [],
+        [],
+        [],
+    ];
+
+    data.forEach((reel) => {
+        reel.forEach((symbol, symbolIndex) => {
+            const displayIndex = symbolIndex % result.length;
+
+            result[displayIndex].push(symbol);
+        });
+    });
+
+    return result;
+}
+
+export function logic({slot, grid, payLine, showBonus}) {
     app.on('GameResult', onGameResult);
 
     async function onGameResult(result) {
+        result.normalGame.symbols =
+            preprocess(result.normalGame.symbols);
+
         log('onGameResult =============');
         table(result);
 
-        // const {
-        //     normalGame,
-        // } = result;
+        const {
+            normalGame,
+            // freeGame,
+        } = result;
+
+        if (normalGame.hasLink) {
+            log('onNormalGame =============');
+            table(normalGame);
+        }
+
+        const scores =
+            await NormalGame({
+                result: normalGame,
+                reels: slot.reels,
+                grid,
+                payLine,
+                showBonus,
+            });
 
         log('Round Complete...');
         app.emit('Idle');

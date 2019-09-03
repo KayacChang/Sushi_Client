@@ -337,21 +337,16 @@ export function Service(prodKey) {
             .map(({scores}) => scores)
             .reduce((a, b) => a + b, 0);
 
-        const randomWild = RandomWild(data['randwild']);
+        const bonus = (data['bonusscore'] > 0) && data['bonusscore'];
 
         return {
             symbols,
             results,
             hasLink,
             scores,
-            randomWild,
+
+            bonus,
         };
-
-        function RandomWild(data) {
-            if (!data || data.length === 0) return;
-
-            return data;
-        }
     }
 
     function Result(data) {

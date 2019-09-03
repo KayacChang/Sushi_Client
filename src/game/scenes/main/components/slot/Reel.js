@@ -11,13 +11,17 @@ function* Strip(data) {
     }
 }
 
+function byX(a, b) {
+    return a.x - b.x;
+}
+
 export function Reel(view) {
     const index = id(view);
 
     const symbols =
         view.children
             .filter(isSymbol)
-            .sort((a, b) => a.x - b.x)
+            .sort(byX)
             .map(Symbol);
 
     const strip = Strip(property.reelStrips[index]);
@@ -36,7 +40,11 @@ export function Reel(view) {
         },
 
         get symbols() {
-            return symbols;
+            return [...symbols].sort(byX);
+        },
+
+        get displaySymbols() {
+            return reel.symbols.slice(1, 1 + property.displayLength);
         },
 
         get state() {
