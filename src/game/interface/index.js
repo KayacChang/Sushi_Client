@@ -12,6 +12,8 @@ export function create() {
     it.main = Main(it);
     it.menu = Menu(it.getChildByName('menu'));
 
+    app.control = it;
+
     return it;
 }
 

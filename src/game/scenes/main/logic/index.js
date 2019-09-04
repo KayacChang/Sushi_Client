@@ -1,12 +1,12 @@
-import {log, table} from '@kayac/utils';
+import {log, table, divide, wait} from '@kayac/utils';
 
 import {NormalGame} from './flow';
 
-// const BET_TO_BIGWIN = 10;
-//
-// function isBigWin(scores) {
-//     return divide(scores, app.user.currentBet) > BET_TO_BIGWIN;
-// }
+const BET_TO_BIGWIN = 10;
+
+function isBigWin(scores) {
+    return divide(scores, app.user.currentBet) > BET_TO_BIGWIN;
+}
 
 export function preprocess(data) {
     const result = [
@@ -26,7 +26,7 @@ export function preprocess(data) {
     return result;
 }
 
-export function logic({slot, grid, payLine, showBonus}) {
+export function logic({slot, grid, payLine, showBonus, showBigWin}) {
     app.on('GameResult', onGameResult);
 
     async function onGameResult(result) {
@@ -54,6 +54,10 @@ export function logic({slot, grid, payLine, showBonus}) {
                 payLine,
                 showBonus,
             });
+
+        if (isBigWin(scores)) {
+            await showBigWin(scores);
+        }
 
         log('Round Complete...');
         app.emit('Idle');

@@ -368,7 +368,13 @@ export function Service(prodKey) {
         const rate = data['LineWinRate'];
         const scores = data['Score'];
 
-        const line = matchLine(positions);
+        const freeSpin = 1;
+        const bonus = 2;
+
+        let line = undefined;
+
+        if (symbols[0] === undefined || [freeSpin, bonus].includes(symbols[0])) line = -1;
+        else line = matchLine(positions);
 
         return {
             symbols,

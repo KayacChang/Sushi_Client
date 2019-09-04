@@ -10,7 +10,7 @@ export async function NormalGame({result, reels, grid, payLine, showBonus}) {
     }
 
     if (bonus) {
-        await showBonus()
+        await showBonus(bonus);
     }
 
     return scores;

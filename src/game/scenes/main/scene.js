@@ -1,11 +1,10 @@
 import {addPackage} from 'pixi_fairygui';
 
-import {Slot, Conveyor, Grid, PayLine} from './components';
+import {Slot, Conveyor, Grid, PayLine, Bonus, BigWin} from './components';
 
 import {symbolConfig} from './data';
 import {logic, preprocess} from './logic';
-import {wait} from "@kayac/utils";
-import {fadeOut} from "../../effect";
+import {fadeIn, fadeOut} from '../../effect';
 
 function isConveyor({name}) {
     return name.includes('conveyor');
@@ -31,8 +30,8 @@ export function create({normalTable}) {
     app.on('SpinStart', whenSlotStateChange);
     app.on('SpinStop', whenSlotStateChange);
 
-    const bonus = scene.getChildByName('bonus');
-    window.bigWin = scene.getChildByName('bigWin');
+    const bonus = Bonus(scene.getChildByName('bonus'));
+    const bigWin = BigWin(scene.getChildByName('bigWin'));
 
     const grid = Grid(scene.getChildByName('grid'));
 
@@ -44,22 +43,19 @@ export function create({normalTable}) {
         payLine,
 
         showBonus,
+        showBigWin,
     });
 
     return scene;
 
-    async function showBonus() {
-        bonus.visible = true;
+    async function showBonus(score) {
+        const targets = app.control;
 
-        bonus.alpha = 1;
+        await fadeOut({targets}).finished;
 
-        bonus.transition['anim'].restart();
+        await bonus.show(score);
 
-        await wait(4000);
-
-        await fadeOut({targets: bonus});
-
-        bonus.visible = false;
+        await fadeIn({targets}).finished;
     }
 
     function whenSlotStateChange(reels) {
@@ -77,5 +73,16 @@ export function create({normalTable}) {
             }
         }
     }
+
+    async function showBigWin(score) {
+        const targets = app.control;
+
+        await fadeOut({targets}).finished;
+
+        await bigWin.show(score);
+
+        await fadeIn({targets}).finished;
+    }
 }
+
 

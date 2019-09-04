@@ -11,12 +11,25 @@ export async function show({result, reels, grid, payLine}) {
 
     const hideSymbols = [];
 
-    results.forEach(showOne);
+    const normal = results.filter(({line}) => line !== -1);
 
-    //  Show Result Complete...
-    await wait(1750);
+    if (normal.length > 0) {
+        normal.forEach(showOne);
 
-    close();
+        await wait(2000);
+
+        close();
+    }
+
+    const scatters = results.filter(({line}) => line === -1);
+
+    if (scatters.length > 0) {
+        scatters.forEach(showOne);
+
+        await wait(2000);
+
+        close();
+    }
 
     app.once('Idle', onIdle);
 
