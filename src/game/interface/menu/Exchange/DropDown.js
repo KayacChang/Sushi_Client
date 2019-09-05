@@ -1,6 +1,6 @@
 import EventEmitter from 'eventemitter3';
 import {Button} from '../../components';
-import {fadeIn, popIn} from '../../../effect';
+import {fadeIn, scaleUp} from '../../../effect';
 
 export function DropDown({label, btn, list, items}) {
     const it = new EventEmitter();
@@ -31,6 +31,7 @@ export function DropDown({label, btn, list, items}) {
 
         function Item(it) {
             const index = it.name.split('@')[1];
+
             it.text = items[index];
         }
     }
@@ -56,7 +57,7 @@ export function DropDown({label, btn, list, items}) {
         list.alpha = 0;
 
         const config = {targets: list, duration: 360};
-        popIn(config);
+        scaleUp(config);
         fadeIn(config);
     }
 

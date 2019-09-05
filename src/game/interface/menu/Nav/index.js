@@ -63,8 +63,9 @@ export function Nav(it) {
         async function open() {
             if (it.interactive) return;
 
-            it.interactive = true;
             await moveTo({x: `-= ${width}`});
+
+            it.interactive = true;
         }
 
         async function close() {

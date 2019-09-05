@@ -1,22 +1,30 @@
-
-import {MenuButton} from './MenuButton';
 import {SpinButton} from './SpinButton';
 import {Status} from './Status';
+import {Option} from './Option';
+import {Button} from '../components';
+
+const {assign} = Object;
 
 export function Main(it) {
-    const view = it.getChildByName('main');
+    const menuButton = Button(it.getChildByName('menu'));
 
-    MenuButton({
-        normal: view.getChildByName('menu@normal'),
+    const optionButton = Button(it.getChildByName('option'));
 
-        async onClick() {
-            await it.menu.open();
-        },
-    });
+    optionButton.on('click', openOption);
 
-    SpinButton(view.getChildByName('spin'));
+    const option = Option(it.getChildByName('optionMenu'));
 
-    Status(view.getChildByName('status'));
+    option.on('OpenExchange', () => it.emit('OpenExchange'));
 
-    return it;
+    SpinButton(it.getChildByName('spin'));
+
+    Status(it.getChildByName('status'));
+
+    return assign(it, {menuButton});
+
+    async function openOption() {
+        await option.open();
+    }
 }
+
+

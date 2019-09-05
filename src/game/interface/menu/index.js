@@ -1,4 +1,4 @@
-import {fadeIn, fadeOut, twink} from '../../effect';
+import {scaleDown, scaleUp} from '../../effect';
 
 import {Nav} from './Nav';
 import {Exchange} from './Exchange';
@@ -7,8 +7,6 @@ import {Information} from './Information';
 
 export function Menu(it) {
     const background = Background(it.getChildByName('background'));
-
-    background.alpha = 0;
 
     const exchange = Exchange(it.getChildByName('exchange'));
     const setting = Setting(it.getChildByName('setting'));
@@ -41,24 +39,24 @@ export function Menu(it) {
     });
 
     function Background(it) {
-        const fade = {
+        const config = {
             targets: it,
-            duration: 320,
-            easing: 'easeOutQuad',
+            duration: 500,
+            easing: 'easeInOutExpo',
         };
+
+        it.scale.set(0);
 
         async function open() {
             if (it.interactive) return;
 
             it.interactive = true;
 
-            await twink({targets: it, duration: 120, interval: 50, alpha: 0.5});
-
-            await fadeIn(fade).finished;
+            await scaleUp(config).finished;
         }
 
         async function close() {
-            await fadeOut(fade).finished;
+            await scaleDown(config).finished;
 
             it.interactive = false;
         }
@@ -95,5 +93,7 @@ export function Menu(it) {
         await nav.close();
 
         it.visible = false;
+
+        it.emit('Closed');
     }
 }

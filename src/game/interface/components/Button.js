@@ -1,6 +1,6 @@
-export function Button(view) {
-    view.interactive = true;
-    view.buttonMode = true;
+export function Button(it) {
+    it.interactive = true;
+    it.buttonMode = true;
 
-    return view;
+    return it;
 }
