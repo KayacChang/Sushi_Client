@@ -1,4 +1,4 @@
-import {log, table, divide, wait} from '@kayac/utils';
+import {log, table, divide} from '@kayac/utils';
 
 import {NormalGame} from './flow';
 

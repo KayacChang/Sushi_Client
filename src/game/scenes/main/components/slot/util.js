@@ -10,10 +10,6 @@ export function isSymbol({name}) {
     return name.includes('symbol');
 }
 
-export function isResult({name}) {
-    return name.includes('show.js');
-}
-
 export function TextureManager(symbolConfig) {
     let config = undefined;
 

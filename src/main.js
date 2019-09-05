@@ -43,9 +43,9 @@ async function main() {
 
         comp.prepend(app.view);
 
-        // const loadScene = LoadScene.create();
-        // app.stage.addChild(loadScene);
-        // app.resize();
+        const loadScene = LoadScene.create();
+        app.stage.addChild(loadScene);
+        app.resize();
 
         enableFullScreenMask();
 
@@ -69,7 +69,7 @@ async function main() {
 
         app.stage.addChildAt(scene, 0);
 
-        // app.stage.removeChild(loadScene);
+        app.stage.removeChild(loadScene);
 
         select('script').forEach((el) => el.remove());
 

@@ -1,15 +1,18 @@
 import LOAD_URL from './assets/sprite_sheets/load.fui';
 import LOAD_ATLAS0_URL from './assets/sprite_sheets/load@atlas0.png';
+import LOAD_ATLAS0_1_URL from './assets/sprite_sheets/load@atlas0_1.png';
 
 import {addPackage} from 'pixi_fairygui';
-import {LoadingBar} from './components/LoadingBar';
 
 import {log} from '@kayac/utils';
+
+import {LoadingBar} from './components/LoadingBar';
 
 export function reserve() {
     return [
         {name: 'load.fui', url: LOAD_URL, xhrType: 'arraybuffer'},
         {name: 'load@atlas0.png', url: LOAD_ATLAS0_URL},
+        {name: 'load@atlas0_1.png', url: LOAD_ATLAS0_1_URL},
     ];
 }
 
@@ -18,10 +21,8 @@ export function create() {
 
     const scene = create('LoadScene');
 
-    const loadingBar =
-        LoadingBar(scene.getChildByName('loading'));
-
-    const process = scene.getChildByName('process');
+    const loadingBar = LoadingBar(scene.getChildByName('loading'));
+    const lead = scene.getChildByName('lead');
 
     app.on('loading', ({progress}, {name}) => {
         log(`Progress: ${progress} %`);
@@ -29,7 +30,7 @@ export function create() {
 
         loadingBar.update(progress);
 
-        process.text = `${progress}%`;
+        lead.x = loadingBar.width;
     });
 
     return scene;
