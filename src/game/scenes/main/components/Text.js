@@ -15,7 +15,7 @@ export function Text({x, y}, config) {
 
     return Object.assign(it, {incrementTo});
 
-    async function incrementTo(score) {
+    async function incrementTo({score, duration}) {
         let value = 0;
 
         const proxy = {
@@ -35,6 +35,8 @@ export function Text({x, y}, config) {
             value: score,
             easing: 'linear',
             round: 1,
+
+            duration,
         }).finished;
     }
 }

@@ -35,7 +35,7 @@ export function Bonus(it) {
 
         await Promise.all([
             fadeIn({targets: scores[score]}).finished,
-            field.incrementTo(score),
+            field.incrementTo({score, duration: 2000}),
         ]);
 
         await wait(2000);

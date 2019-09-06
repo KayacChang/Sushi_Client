@@ -24,9 +24,11 @@ export function BigWin(it) {
 
         fadeIn({targets: scores});
 
-        await scores.incrementTo(score);
+        await scores.incrementTo({score, duration: 2000});
 
-        await wait(1750);
+        await wait(2750);
+
+        it.transition['close'].restart();
 
         await fadeOut({targets: it}).finished;
 

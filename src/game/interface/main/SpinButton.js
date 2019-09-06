@@ -7,26 +7,22 @@ export function SpinButton(it) {
 
     const normal = it.getChildByName('play');
 
-    it.on('click', onClick);
-
-    function onClick() {
-        return play();
-    }
+    it.on('click', play);
 
     async function play() {
         animation(it);
 
         normal.visible = !normal.visible;
 
-        // app.user.cash -= app.user.currentBet;
-        // app.user.lastWin = 0;
+        app.user.cash -= app.user.currentBet;
+        app.user.lastWin = 0;
 
-        // const result = await app.service.sendOneRound({
-        //     key: process.env.KEY,
-        //     bet: app.user.bet,
-        // });
+        const result = await app.service.sendOneRound({
+            key: process.env.KEY,
+            bet: app.user.bet,
+        });
 
-        // return app.emit('GameResult', result);
+        return app.emit('GameResult', result);
     }
 }
 

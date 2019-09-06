@@ -28,12 +28,16 @@ export function Nav(it) {
     settingButton.on('click', () => it.emit('open', 'setting'));
     infoButton.on('click', () => it.emit('open', 'information'));
 
+    let isOpen = false;
+
     async function open() {
         await background.open();
 
         await Promise.all(
             buttons.map((btn) => btn.open())
         );
+
+        isOpen = true;
     }
 
     async function close() {
@@ -42,6 +46,8 @@ export function Nav(it) {
         );
 
         await background.close();
+
+        isOpen = false;
     }
 
     function Background(it) {
@@ -78,5 +84,5 @@ export function Nav(it) {
         return Object.assign(it, {open, close});
     }
 
-    return Object.assign(it, {open, close});
+    return Object.assign(it, {open, close, isOpen});
 }

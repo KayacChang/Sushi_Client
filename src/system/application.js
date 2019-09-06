@@ -7,13 +7,14 @@ import {Network} from './modules/network';
 import {Resource} from './modules/resource';
 import {resize} from './modules/screen';
 
-// import Swal from './plugin/swal';
+import Swal from './plugin/swal';
+import i18n from './plugin/i18n';
 
 import {isMobile} from 'pixi.js/lib/core/utils';
 
 const {defineProperties, assign, freeze} = Object;
 
-export function App() {
+export async function App() {
     const app =
         new Application({
             resolution: devicePixelRatio,
@@ -28,8 +29,10 @@ export function App() {
     const sound = Sound(app);
     //  Network
     const network = Network();
+    //  Translate
+    const translate = await i18n.init();
     //  Alert
-    // const alert = Swal(app);
+    const alert = Swal(translate);
 
     //  Service
     let service = undefined;
@@ -63,6 +66,9 @@ export function App() {
         control: {
             get: () => control,
             set: (newControl) => control = newControl,
+        },
+        translate: {
+            get: () => translate,
         },
     });
 

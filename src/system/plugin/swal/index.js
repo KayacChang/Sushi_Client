@@ -5,7 +5,7 @@ import ALERT from './sounds/alert01.mp3';
 import SUCCESS from './sounds/success01.mp3';
 
 
-export default function() {
+export default function(translate) {
     const defaultStyle = {
         background: '#212121',
         confirmButtonText: translate(`common:button.confirm`),
@@ -122,10 +122,7 @@ export default function() {
             ...defaultStyle,
 
             title: translate(`common:message.checkoutTitle`),
-            html: `
-        <ul id="list">
-        </ul>
-        `,
+            html: `<ul id="list"></ul>`,
             cancelButtonColor: '#007BFF',
             onBeforeOpen,
         };

@@ -1,9 +1,7 @@
 import {Page} from '../Page';
-import {Button} from '../../components';
+import {Button, Amount} from '../../components';
 
 import {currencyFormat} from '@kayac/utils';
-
-import {observe} from '../../observe';
 
 import {FormButton} from './FormButton';
 import {DropDown} from './DropDown';
@@ -15,8 +13,6 @@ export function Exchange(it) {
     const key = process.env.KEY;
 
     it = Page(it);
-
-    const _open = it.open;
 
     const amount = Amount(it.getChildByName('output@amount'));
 
@@ -47,6 +43,12 @@ export function Exchange(it) {
         it.children
             .filter(({name}) => name.includes('balance'));
 
+    const helper = it.getChildByName('help@amount');
+
+    const _open = it.open;
+
+    it.open = open;
+
     init();
 
     return it;
@@ -65,29 +67,21 @@ export function Exchange(it) {
 
         dropdown.on('select', onSelect);
 
-        it.open = open;
-
-        clear();
-    }
-
-    function onSelect(index) {
-        currency = currencies[index];
-
         clear();
     }
 
     async function open() {
         if (app.user.hasExchanged) {
-            // const {value} =
-            //     await app.alert
-            //         .request({title: ('common:message.checkout')});
-            //
-            // if (!value) return;
+            const {value} =
+                await app.alert
+                    .request({title: app.translate('common:message.checkout')});
+
+            if (!value) return;
 
             const data =
                 await app.service.checkout({key});
 
-            // app.alert.checkoutList(data);
+            app.alert.checkoutList(data);
 
             app.user.hasExchanged = false;
         }
@@ -135,42 +129,61 @@ export function Exchange(it) {
 
     function clear() {
         amount.clear();
+
+        helper.text = '';
+    }
+
+    function currentBalance() {
+        return app.service.accountBalance[currency.name];
     }
 
     function onNumberPadClick(value) {
-        (value === 'delete') ?
-            amount.pop() : amount.push(value);
+        if (value === 'delete') {
+            return amount.pop();
+        }
+
+        amount.push(value);
+
+        const balance = currentBalance();
+
+        if (amount.value >= balance) {
+            return amount.value = balance;
+        }
     }
 
     function onAmountChange(value) {
-        cash.text = currencyFormat(currency.rate * value);
+        value = trunc(currency.rate * value);
 
-        confirmBtn.enable = (value > 0);
-    }
-}
+        cash.text = currencyFormat(value);
 
-function Amount(it) {
-    it = observe({
-        key: 'value', value: 0, onChange,
-    }, it);
-
-    return Object.assign(it, {push, pop, clear});
-
-    function onChange(value) {
-        it.text = currencyFormat(value);
-
-        it.emit('change', value);
+        confirmBtn.enable = check(value);
     }
 
-    function clear() {
-        it.value = 0;
+    function check(value) {
+        const needCheck = (currency.rate === 0.5);
+
+        const isOdd = (value % 2 !== 0);
+
+        if (needCheck && isOdd) {
+            helper.text = app.translate('common:helper.amountIsOdd');
+
+            return false;
+        }
+
+        helper.text = '';
+
+        const isEmpty = (value === 0);
+
+        if (isEmpty) {
+            return false;
+        }
+
+        return true;
     }
 
-    function pop() {
-        it.value = trunc(it.value / 10);
-    }
+    function onSelect(index) {
+        currency = currencies[index];
 
-    function push(value) {
-        it.value = (it.value * 10) + Number(value);
+        clear();
     }
 }

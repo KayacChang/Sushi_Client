@@ -24,6 +24,13 @@ export function User() {
     let payTable = [];
     let jackPot = {};
 
+    const autoStopCondition = {
+        'on_any_win': false,
+        'on_single_win_of_at_least': 0,
+        'if_cash_increases_by': 0,
+        'if_cash_decreases_by': 0,
+    };
+
     return seal({
         get id() {
             return id;
@@ -142,6 +149,10 @@ export function User() {
         set jackPot(newTable) {
             jackPot = newTable;
             app.emit('JackPotChange', jackPot);
+        },
+
+        get autoStopCondition() {
+            return autoStopCondition;
         },
     });
 }

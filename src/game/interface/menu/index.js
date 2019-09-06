@@ -47,31 +47,39 @@ export function Menu(it) {
 
         it.scale.set(0);
 
+        let isOpen = false;
+
         async function open() {
             if (it.interactive) return;
 
             it.interactive = true;
 
             await scaleUp(config).finished;
+
+            isOpen = true;
         }
 
         async function close() {
             await scaleDown(config).finished;
 
             it.interactive = false;
+
+            isOpen = false;
         }
 
-        return Object.assign(it, {open, close});
+        return Object.assign(it, {
+            open, close, isOpen,
+        });
     }
 
     async function open(page) {
         it.visible = true;
 
-        await nav.open();
+        if (!nav.isOpen) await nav.open();
 
         if (!page) return;
 
-        await background.open();
+        if (!background.isOpen) await background.open();
 
         if (currentPage) await currentPage.close();
 
