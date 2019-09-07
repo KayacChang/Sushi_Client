@@ -1,18 +1,18 @@
 const {defineProperty} = Object;
 
 export function observe({key, value, onChange}, it) {
-    const proxy = {
+    const descriptor = {
         get() {
             return value;
         },
-        set(num) {
-            value = num;
+        set(newValue) {
+            value = newValue;
 
             onChange.call(it, value);
         },
     };
 
-    proxy.set(value);
+    descriptor.set(value);
 
-    return defineProperty(it, key, proxy);
+    return defineProperty(it, key, descriptor);
 }

@@ -174,23 +174,29 @@ function Bet({label, output, prev, next}) {
 function Auto({label, output, prev, next}) {
     const options = app.user.autoOptions;
 
+    app.on('UserAutoChange', update);
+
     return Control({
         prev, next,
 
-        value: app.user.bet,
+        value: app.user.auto,
 
         onChange,
     });
 
-    function onChange(value) {
+    function update(value) {
         output.text = options[value];
-
-        app.user.auto = value;
 
         prev.enable = (value > 0);
         next.enable = (value < options.length - 1);
 
         return (value > 0) && (value < options.length - 1);
+    }
+
+    function onChange(value) {
+        app.user.auto = value;
+
+        return update(value);
     }
 }
 

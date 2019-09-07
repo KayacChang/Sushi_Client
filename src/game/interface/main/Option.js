@@ -13,6 +13,7 @@ export function Option(it) {
     it.interactive = true;
 
     const backButton = Button(it.getChildByName('back'));
+    backButton.on('click', close);
 
     const inner = Inner(it.getChildByName('inner'));
 
@@ -29,19 +30,21 @@ export function Option(it) {
 
     exchangeButton.on('click', openExchange);
 
-    return assign(it, {open});
+    let current = undefined;
+
+    return assign(it, {open, close});
 
     async function open() {
         backButton.interactive = true;
 
         const config = {targets: it, ...TRANS.IN};
 
+        if (current) inner.update(current);
+
         await Promise.all([
             scaleUp(config).finished,
             fadeIn(config).finished,
         ]);
-
-        backButton.once('click', close);
     }
 
     async function close() {
@@ -60,7 +63,11 @@ export function Option(it) {
 
         const reset = await hide();
 
-        await inner.open(this.name);
+        current = this.name;
+
+        inner.update(current);
+
+        await inner.open();
 
         backButton.once('click', prev);
 

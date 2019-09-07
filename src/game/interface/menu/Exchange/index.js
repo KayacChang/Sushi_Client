@@ -111,6 +111,8 @@ export function Exchange(it) {
 
         app.user.hasExchanged = true;
 
+        app.emit('Idle');
+
         it.emit('close');
     }
 

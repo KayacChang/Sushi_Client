@@ -7,6 +7,8 @@ export function Button(it) {
     return defineProperties(it, {
 
         enable: {
+            configurable: true,
+
             get() {
                 return it.interactive;
             },

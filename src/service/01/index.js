@@ -240,7 +240,6 @@ export function Service(prodKey) {
         return request('lobby/exchange', requestBody)
             .then((data) => {
                 app.user.cash = data['gameCoin'];
-                app.emit('UserStatusChange', app.user);
             })
             .then(() => refresh({key}))
             .then(() => ({accountBalance, cash: app.user.cash}));
@@ -260,7 +259,6 @@ export function Service(prodKey) {
         return request('lobby/checkout', requestBody)
             .then((data) => {
                 app.user.cash = 0;
-                app.emit('UserStatusChange', app.user);
 
                 const result =
                     entries(data['userCoinQuota'])

@@ -136,6 +136,10 @@ export function User() {
             app.emit('UserAutoChange', auto);
         },
 
+        get autoStopCondition() {
+            return autoStopCondition;
+        },
+
         get payTable() {
             return payTable;
         },
@@ -149,10 +153,6 @@ export function User() {
         set jackPot(newTable) {
             jackPot = newTable;
             app.emit('JackPotChange', jackPot);
-        },
-
-        get autoStopCondition() {
-            return autoStopCondition;
         },
     });
 }

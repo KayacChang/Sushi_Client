@@ -42,7 +42,7 @@ async function duration() {
     app.emit('SpinDuration');
 
     let duration = getSpinDuration();
-    app.on('QuickStop', () => duration = 0);
+    app.once('QuickStop', () => duration = 0);
 
     while (duration > 0) {
         const t0 = performance.now();

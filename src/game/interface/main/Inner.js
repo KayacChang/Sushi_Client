@@ -16,7 +16,7 @@ export function Inner(it) {
             .reduce(pre, [])
             .map(Select);
 
-    return assign(it, {open, close});
+    return assign(it, {open, close, update});
 
     function pre(selects, child) {
         const {name} = child;
@@ -98,7 +98,7 @@ export function Inner(it) {
         }
     }
 
-    function setOptions(func) {
+    function update(func) {
         const options = app.user[`${func}Options`];
 
         const current = app.user[func];
@@ -124,10 +124,8 @@ export function Inner(it) {
         });
     }
 
-    async function open(name) {
+    async function open() {
         it.visible = true;
-
-        setOptions(name);
 
         const config = {targets: it.children, ...TRANS.IN};
 

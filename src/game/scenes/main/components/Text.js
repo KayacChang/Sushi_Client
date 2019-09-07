@@ -2,6 +2,8 @@ import {BitmapText} from 'pixi.js/lib/extras';
 import {fadeIn} from '../../../effect';
 import anime from 'animejs';
 
+const {assign} = Object;
+
 export function Text({x, y}, config) {
     let {text, ...options} = config;
 
@@ -13,7 +15,7 @@ export function Text({x, y}, config) {
 
     it.anchor.set(.5);
 
-    return Object.assign(it, {incrementTo});
+    return assign(it, {incrementTo});
 
     async function incrementTo({score, duration}) {
         let value = 0;

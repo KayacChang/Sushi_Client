@@ -20,10 +20,24 @@ export function Main(it) {
 
     Status(it.getChildByName('status'));
 
-    return assign(it, {menuButton});
+    return assign(it, {menuButton, whenClickOutsideClose});
+
+    function whenClickOutsideClose(target) {
+        const block = it.getChildByName('block');
+
+        block.interactive = true;
+
+        block.once('click', async () => {
+            await target.close();
+
+            block.interactive = false;
+        });
+    }
 
     async function openOption() {
         await option.open();
+
+        whenClickOutsideClose(option);
     }
 }
 

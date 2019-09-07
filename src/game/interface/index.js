@@ -26,6 +26,8 @@ export function create() {
         main.menuButton.interactive = false;
 
         await menu.open(page);
+
+        main.whenClickOutsideClose(menu);
     }
 
     function onMenuClose() {
