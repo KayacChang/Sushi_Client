@@ -26,19 +26,16 @@ export function preprocess(data) {
     return result;
 }
 
-export function logic({slot, grid, payLine, showBonus, showBigWin}) {
+export function logic({slot, grid, payLine, showBonus, showBigWin, showFreeGame, hideFreeGame}) {
     app.on('GameResult', onGameResult);
 
     async function onGameResult(result) {
-        result.normalGame.symbols =
-            preprocess(result.normalGame.symbols);
-
         log('onGameResult =============');
         table(result);
 
         const {
             normalGame,
-            // freeGame,
+            freeGame,
         } = result;
 
         if (normalGame.hasLink) {
@@ -57,6 +54,29 @@ export function logic({slot, grid, payLine, showBonus, showBigWin}) {
 
         if (isBigWin(scores)) {
             await showBigWin(scores);
+        }
+
+        if (freeGame) {
+            await showFreeGame();
+
+            let totalScores = 0;
+
+            for (const round of freeGame) {
+                totalScores +=
+                    await NormalGame({
+                        result: round,
+                        reels: slot.reels,
+                        grid,
+                        payLine,
+                        showBonus,
+                    });
+            }
+
+            if (isBigWin(totalScores)) {
+                await showBigWin(totalScores);
+            }
+
+            await hideFreeGame();
         }
 
         log('Round Complete...');

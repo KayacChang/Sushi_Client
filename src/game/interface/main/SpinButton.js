@@ -148,9 +148,10 @@ async function* State(it) {
     async function onSpin() {
         view.visible = false;
 
-        send();
-
-        await animation(it);
+        await Promise.all([
+            send(),
+            animation(it),
+        ]);
     }
 
     function onStop() {
@@ -182,11 +183,7 @@ async function send() {
         bet: app.user.bet,
     });
 
-    await wait(5000);
-
-    return app.emit('Idle');
-
-    // return app.emit('GameResult', result);
+    return app.emit('GameResult', result);
 }
 
 function insufficientBalance() {

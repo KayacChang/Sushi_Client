@@ -46,19 +46,17 @@ export async function show({result, reels, grid, payLine}) {
     async function onIdle() {
         const results = getResultGen();
 
-        let looping = undefined;
-
         (
             function loop() {
                 close();
 
                 showOne(results.next().value);
 
-                looping = setTimeout(() => requestAnimationFrame(loop), 1750);
+                setTimeout(() => requestAnimationFrame(loop), 1750);
             }
         )();
 
-        app.once('SpinStart', () => clearTimeout(looping));
+        app.once('SpinStart', () => app.off('Idle', onIdle));
     }
 
     function showOne({line, positions, symbols}) {
