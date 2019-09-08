@@ -14,8 +14,6 @@ export function BigWin(it) {
     return {show};
 
     async function show(score) {
-        it.visible = true;
-
         fadeIn({targets: it});
 
         it.transition['anim'].restart();
@@ -31,8 +29,6 @@ export function BigWin(it) {
         it.transition['close'].restart();
 
         await fadeOut({targets: it}).finished;
-
-        it.visible = false;
 
         scores.text = '';
     }

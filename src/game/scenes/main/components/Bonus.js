@@ -25,8 +25,6 @@ export function Bonus(it) {
     return {show};
 
     async function show(score) {
-        it.visible = true;
-
         it.alpha = 1;
 
         it.transition['anim'].restart();
@@ -41,8 +39,6 @@ export function Bonus(it) {
         await wait(2000);
 
         await fadeOut({targets: it}).finished;
-
-        it.visible = false;
 
         field.text = '';
     }

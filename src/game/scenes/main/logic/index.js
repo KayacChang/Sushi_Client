@@ -1,4 +1,4 @@
-import {log, table, divide} from '@kayac/utils';
+import {log, table, divide, wait} from '@kayac/utils';
 
 import {NormalGame} from './flow';
 
@@ -34,6 +34,7 @@ export function logic({slot, grid, payLine, showBonus, showBigWin, showFreeGame,
         table(result);
 
         const {
+            cash,
             normalGame,
             freeGame,
         } = result;
@@ -52,9 +53,7 @@ export function logic({slot, grid, payLine, showBonus, showBigWin, showFreeGame,
                 showBonus,
             });
 
-        if (isBigWin(scores)) {
-            await showBigWin(scores);
-        }
+        await clear(scores);
 
         if (freeGame) {
             await showFreeGame();
@@ -62,7 +61,7 @@ export function logic({slot, grid, payLine, showBonus, showBigWin, showFreeGame,
             let totalScores = 0;
 
             for (const round of freeGame) {
-                totalScores +=
+                const scores =
                     await NormalGame({
                         result: round,
                         reels: slot.reels,
@@ -70,17 +69,29 @@ export function logic({slot, grid, payLine, showBonus, showBigWin, showFreeGame,
                         payLine,
                         showBonus,
                     });
+
+                app.user.lastWin = scores;
+                totalScores += scores;
             }
 
-            if (isBigWin(totalScores)) {
-                await showBigWin(totalScores);
-            }
+            await clear(totalScores);
 
             await hideFreeGame();
         }
 
+        app.user.cash = cash;
+
         log('Round Complete...');
         app.emit('Idle');
+    }
+
+    async function clear(scores) {
+        if (isBigWin(scores)) await showBigWin(scores);
+
+        app.user.lastWin = scores;
+        app.user.cash += scores;
+
+        if (scores > 0) await wait(360);
     }
 }
 

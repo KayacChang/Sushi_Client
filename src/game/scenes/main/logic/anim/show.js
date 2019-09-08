@@ -31,9 +31,17 @@ export async function show({result, reels, grid, payLine}) {
         close();
     }
 
+    let timer = undefined;
+
     app.once('Idle', onIdle);
 
-    app.once('SpinStart', close);
+    app.once('SpinStart', () => {
+        close();
+
+        clearTimeout(timer);
+
+        app.off('Idle', onIdle);
+    });
 
     function* getResultGen() {
         while (true) {
@@ -45,18 +53,15 @@ export async function show({result, reels, grid, payLine}) {
 
     async function onIdle() {
         const results = getResultGen();
-
         (
             function loop() {
                 close();
 
                 showOne(results.next().value);
 
-                setTimeout(() => requestAnimationFrame(loop), 1750);
+                timer = setTimeout(() => requestAnimationFrame(loop), 1750);
             }
         )();
-
-        app.once('SpinStart', () => app.off('Idle', onIdle));
     }
 
     function showOne({line, positions, symbols}) {
@@ -70,6 +75,7 @@ export async function show({result, reels, grid, payLine}) {
 
             effect.alpha = 1;
 
+            effect.transition['anim'].pause();
             effect.transition['anim'].restart();
 
             effects.push(effect);
