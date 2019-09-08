@@ -1,6 +1,7 @@
 import {Page} from '../Page';
 import {Button} from '../../components';
 import anime from 'animejs';
+import {nextFrame} from '@kayac/utils';
 
 export function Setting(it) {
     it = Page(it);
@@ -105,84 +106,99 @@ export function Setting(it) {
 
 function Volume({label, output, prev, next}) {
     //
-    return Control({
+    const it = Control({
         prev, next,
 
         value: app.sound.volume() * 10,
 
-        onChange,
+        onChange(value) {
+            app.sound.volume(value / 10);
+
+            return update(value);
+        },
     });
 
-    function onChange(value) {
-        output.text = value;
+    app.on('SoundChange', change);
 
-        app.sound.volume(value / 10);
+    return it;
+
+    function change(value) {
+        value *= 10;
+
+        it.value = value;
+
+        return update(value);
+    }
+
+    function update(value) {
+        output.text = value;
 
         next.enable = (value < 10);
         prev.enable = (value > 0);
 
-        return (value < 10) && (value > 0);
+        return !(next.enable && prev.enable);
     }
 }
 
 function Speed({label, output, prev, next}) {
     const options = app.user.speedOptions;
 
-    return Control({
+    const it = Control({
         prev, next,
 
         value: app.user.speed,
 
-        onChange,
+        onChange(value) {
+            app.user.speed = value;
+
+            return update(value);
+        },
     });
 
-    function onChange(value) {
-        output.text = options[value];
+    app.on('UserSpeedChange', change);
 
-        app.user.speed = value;
+    return it;
+
+    function change(value) {
+        it.value = value;
+
+        update(value);
+    }
+
+    function update(value) {
+        output.text = options[value];
 
         next.enable = (value < options.length - 1);
         prev.enable = (value > 0);
 
-        return (value > 0) && (value < options.length - 1);
+        return !(next.enable && prev.enable);
     }
 }
 
 function Bet({label, output, prev, next}) {
     const options = app.user.betOptions;
 
-    return Control({
+    const it = Control({
         prev, next,
 
         value: app.user.bet,
 
-        onChange,
+        onChange(value) {
+            app.user.bet = value;
+
+            return update(value);
+        },
     });
 
-    function onChange(value) {
-        output.text = options[value];
+    app.on('UserBetChange', change);
 
-        app.user.bet = value;
+    return it;
 
-        prev.enable = (value > 0);
-        next.enable = (value < options.length - 1);
+    function change(value) {
+        it.value = value;
 
-        return (value > 0) && (value < options.length - 1);
+        update(value);
     }
-}
-
-function Auto({label, output, prev, next}) {
-    const options = app.user.autoOptions;
-
-    app.on('UserAutoChange', update);
-
-    return Control({
-        prev, next,
-
-        value: app.user.auto,
-
-        onChange,
-    });
 
     function update(value) {
         output.text = options[value];
@@ -190,13 +206,42 @@ function Auto({label, output, prev, next}) {
         prev.enable = (value > 0);
         next.enable = (value < options.length - 1);
 
-        return (value > 0) && (value < options.length - 1);
+        return !(next.enable && prev.enable);
+    }
+}
+
+function Auto({label, output, prev, next}) {
+    const options = app.user.autoOptions;
+
+    const it = Control({
+        prev, next,
+
+        value: app.user.auto,
+
+        onChange(value) {
+            app.user.auto = value;
+
+            return update(value);
+        },
+    });
+
+    app.on('UserAutoChange', change);
+
+    return it;
+
+    function change(value) {
+        it.value = value;
+
+        update(value);
     }
 
-    function onChange(value) {
-        app.user.auto = value;
+    function update(value) {
+        output.text = options[value];
 
-        return update(value);
+        prev.enable = (value > 0);
+        next.enable = (value < options.length - 1);
+
+        return !(next.enable && prev.enable);
     }
 }
 
@@ -223,50 +268,34 @@ function Cond({label, output, prev, next, key}) {
 }
 
 function Control({prev, next, value, onChange}) {
-    //
     prev = Button(prev);
-    prev.on('pointerdown', () => onHold(prev, onPrev));
+    prev.on('pointerdown', pressHold(onPrev, prev));
 
 
     next = Button(next);
-    next.on('pointerdown', () => onHold(next, onNext));
+    next.on('pointerdown', pressHold(onNext, next));
 
     onChange(value);
 
-    function onHold(it, func) {
-        let hold = true;
-
-        let notDone = true;
-
-        it.once('pointerup', () => hold = false);
-
-        update();
-
-        const start = performance.now();
-
-        (function call() {
-            const duration = performance.now() - start;
-
-            if (duration > 1000) update();
-
-            if (!hold || !notDone) return;
-
-            requestAnimationFrame(call);
-        })();
-
-        function update() {
-            func();
-
-            notDone = onChange(value);
-        }
-    }
+    return {
+        get value() {
+            return value;
+        },
+        set value(newValue) {
+            value = newValue;
+        },
+    };
 
     function onPrev() {
         value -= 1;
+
+        return onChange(value);
     }
 
     function onNext() {
         value += 1;
+
+        return onChange(value);
     }
 }
 
@@ -313,4 +342,53 @@ function Toggle({label, output, btn, value, onChange}) {
 
         await update();
     }
+}
+
+/**
+ * pressHold
+ *      Execute function once at first time.
+ *      And after 1 second will execute the function on every frames.
+ *
+ *      ** the parameter function must return a Boolean to telling the operation is done. **
+ *
+ *      Example:
+ *          it = Button();
+ *          it.on('pointerdown', pressHold(onClick, it));
+ *          function onClick() { *** }
+ *
+ * @param  {Function} func - The function want to execute when long press, must return a Boolean.
+ * @param  {EventEmitter} it - The element which be pressed.
+ * @return {call}
+ */
+function pressHold(func, it) {
+    //
+    return function call() {
+        let holding = true;
+
+        it.once('pointerup', () => holding = false);
+
+        let done = func();
+
+        (
+            async function execute(getDuration) {
+                const duration = getDuration();
+
+                if (duration > 1000) done = func();
+
+                if (done || !holding) return;
+
+                await nextFrame();
+
+                return execute(getDuration);
+            }
+        )(Timer());
+    };
+}
+
+function Timer() {
+    const start = performance.now();
+
+    return function get() {
+        return performance.now() - start;
+    };
 }

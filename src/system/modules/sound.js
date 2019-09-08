@@ -24,20 +24,25 @@ export function Sound({loader}) {
         return sound;
     }
 
-    function mute(isMuted, target) {
+    function mute(flag, target) {
         if (target) {
             const sound = loader.resources[target].data;
-            sound.mute(isMuted);
+            sound.mute(flag);
 
             return sound;
         }
 
-        if (isMuted === undefined) return Howler._muted;
-        return Howler.mute(isMuted);
+        if (flag === undefined) return Howler._muted;
+
+        app.emit('SoundChange', flag ? 0 : volume());
+
+        return Howler.mute(flag);
     }
 
     //  From 0.0 to 1.0
     function volume(level) {
+        app.emit('SoundChange', level);
+
         return Howler.volume(level);
     }
 

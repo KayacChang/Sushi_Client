@@ -123,6 +123,8 @@ export function User() {
         },
         set speed(index) {
             speed = index;
+
+            app.emit('UserSpeedChange', speed);
         },
 
         get autoOptions() {
