@@ -1,7 +1,7 @@
 import {Page} from '../Page';
 import {Button} from '../../components';
 import anime from 'animejs';
-import {pressHold} from '../../../utils';
+import {pressHold} from '@kayac/utils';
 
 export function Setting(it) {
     it = Page(it);
