@@ -10,8 +10,6 @@ import {resize} from './modules/screen';
 import Swal from './plugin/swal';
 import i18n from './plugin/i18n';
 
-import {isMobile} from 'pixi.js/lib/core/utils';
-
 const {defineProperties, assign, freeze} = Object;
 
 export async function App() {
@@ -19,8 +17,6 @@ export async function App() {
         new Application({
             resolution: devicePixelRatio,
             antialias: true,
-            forceCanvas: true,
-            powerPreference: isMobile.phone && 'high-performance',
         });
 
     //  Resource
