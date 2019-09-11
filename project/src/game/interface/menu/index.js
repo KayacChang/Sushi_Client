@@ -5,6 +5,8 @@ import {Exchange} from './Exchange';
 import {Setting} from './Setting';
 import {Information} from './Information';
 
+const {values, assign} = Object;
+
 export function Menu(it) {
     const background = Background(it.getChildByName('background'));
 
@@ -18,7 +20,7 @@ export function Menu(it) {
         information,
     };
 
-    Object.values(pages)
+    values(pages)
         .forEach((page) => {
             page.visible = false;
             page.alpha = 0;
@@ -32,7 +34,9 @@ export function Menu(it) {
     nav.on('close', close);
     nav.on('open', open);
 
-    return Object.assign(it, {
+    return assign(it, {
+        isOpen: false,
+
         open, close,
 
         ...(pages),
@@ -54,20 +58,20 @@ export function Menu(it) {
 
             it.interactive = true;
 
-            await scaleUp(config).finished;
+            await scaleUp({...config, x: [0, 1], y: [0, 1]}).finished;
 
             isOpen = true;
         }
 
         async function close() {
-            await scaleDown(config).finished;
+            await scaleDown({...config, x: [1, 0], y: [1, 0]}).finished;
 
             it.interactive = false;
 
             isOpen = false;
         }
 
-        return Object.assign(it, {
+        return assign(it, {
             open, close, isOpen,
         });
     }
@@ -85,18 +89,19 @@ export function Menu(it) {
 
         await it[page].open();
 
+        it.isOpen = true;
+
         currentPage = it[page];
     }
 
     async function close() {
         if (currentPage) {
-            await Promise.all([
-                currentPage.close(),
-                background.close(),
-            ]);
+            await currentPage.close();
 
             currentPage = undefined;
         }
+
+        await background.close();
 
         await nav.close();
 

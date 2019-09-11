@@ -5,7 +5,7 @@ import {Slot, Conveyor, Grid, PayLine, Bonus, BigWin} from './components';
 import {symbolConfig} from './data';
 import {logic, preprocess} from './logic';
 import {fadeIn, fadeOut} from '../../effect';
-import {isFunction, isString, wait} from '@kayac/utils';
+import {isFunction, isString, wait, waitByFrameTime} from '@kayac/utils';
 
 export function create({normalTable}) {
     const create = addPackage(app, 'main');
@@ -23,9 +23,6 @@ export function create({normalTable}) {
         scene.children
             .filter(isConveyor)
             .map(Conveyor);
-
-    app.on('SpinStart', whenSlotStateChange);
-    app.on('SpinStop', whenSlotStateChange);
 
     const bonus = Bonus(select('bonus'));
     const bigWin = BigWin(select('bigWin'));
@@ -46,7 +43,49 @@ export function create({normalTable}) {
         hideFreeGame,
     });
 
+    app.on('SpinStart', whenSlotStateChange);
+    app.on('SpinStop', whenSlotStateChange);
+    app.once('Idle', onIdle);
+
     return scene;
+
+    async function onIdle() {
+        scene.transition['anim'].pause();
+
+        const loadScene =
+            app.stage.getChildByName('LoadScene');
+
+        await fadeOut({targets: loadScene, duration: 3000}).finished;
+
+        app.stage.removeChild(loadScene);
+
+        const feature = scene.getChildByName('feature');
+
+        feature.interactive = true;
+
+        feature.once('click', firstClick);
+
+        async function firstClick() {
+            app.sound.play('spin');
+
+            feature.interactive = false;
+
+            await fadeOut({targets: feature}).finished;
+
+            scene.removeChild(feature);
+
+            scene.transition['anim'].play();
+
+            await waitByFrameTime(1000);
+
+            app.control.visible = true;
+
+            fadeIn({targets: app.control, alpha: [0, 1], duration: 2000});
+
+            const bgm = app.sound.play('Normal_BGM');
+            bgm.fade(0, 1, 1000);
+        }
+    }
 
     async function showBonus(score) {
         await hideControlBar(call);

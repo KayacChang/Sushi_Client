@@ -74,20 +74,20 @@ async function main() {
 
         app.stage.addChildAt(scene, 0);
 
-        app.stage.removeChild(loadScene);
-
         select('script').forEach((el) => el.remove());
 
         app.resize();
 
         app.emit('Idle');
+
+        document.title = app.translate('title');
         //
     } catch (error) {
         console.error(error);
-        //
-        // const msg = {title: error.message};
-        //
-        // app.alert.error(msg);
+
+        const msg = {title: error.message};
+
+        app.alert.error(msg);
     }
 }
 

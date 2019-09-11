@@ -22,6 +22,8 @@ export function Exchange(it) {
 
     const currencies = [...app.service.currencies.values()];
 
+    let currency = currencies[0];
+
     const dropdown = DropDown({
         label: it.select('output@currency'),
         btn: it.select('frame@currency'),
@@ -29,7 +31,7 @@ export function Exchange(it) {
         items: currencies.map(({name}) => app.translate(`common:currency.${name}`)),
     });
 
-    let currency = currencies[0];
+    dropdown.update(0);
 
     const cancelBtn = Button(it.select('button@cancel'));
 
@@ -88,7 +90,7 @@ export function Exchange(it) {
                 await app.alert
                     .request({title: app.translate('common:message.checkout')});
 
-            if (!value) return;
+            if (!value) return it.emit('close');
 
             const data =
                 await app.service.checkout({key});
@@ -186,13 +188,7 @@ export function Exchange(it) {
 
         helper.text = '';
 
-        const isEmpty = (value === 0);
-
-        if (isEmpty) {
-            return false;
-        }
-
-        return true;
+        return (value !== 0);
     }
 
     function onSelect(index) {

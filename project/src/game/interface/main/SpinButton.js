@@ -38,6 +38,8 @@ export function SpinButton(it) {
     }
 
     async function play() {
+        app.sound.play('spin');
+
         await state.next();
     }
 }

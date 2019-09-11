@@ -13,11 +13,19 @@ export async function show({result, reels, grid, payLine}) {
 
     const normal = results.filter(({line}) => line !== -1);
 
-    await execute(normal);
+    if (normal.length > 0) {
+        app.sound.play('Connect');
+
+        await execute(normal);
+    }
 
     const scatters = results.filter(({line}) => line === -1);
 
-    await execute(scatters);
+    if (scatters.length > 0) {
+        app.sound.play('Connect');
+
+        await execute(scatters);
+    }
 
     let timer = undefined;
 
@@ -32,8 +40,6 @@ export async function show({result, reels, grid, payLine}) {
     });
 
     async function execute(data) {
-        if (!(data.length > 0)) return;
-
         let skip = false;
 
         data.forEach(showOne);

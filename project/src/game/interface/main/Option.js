@@ -13,7 +13,7 @@ export function Option(it) {
     it.interactive = true;
 
     const backButton = Button(it.getChildByName('back'));
-    backButton.on('click', close);
+
 
     const inner = Inner(it.getChildByName('inner'));
 
@@ -24,7 +24,7 @@ export function Option(it) {
             button.on('click', onOptionClick);
         });
 
-    Audio();
+    const audio = Audio();
 
     const exchangeButton = Button(it.getChildByName('exchange'));
 
@@ -32,23 +32,33 @@ export function Option(it) {
 
     let current = undefined;
 
-    return assign(it, {open, close});
+    return assign(it, {
+        isOpen: false,
+        open, close,
+    });
 
     async function open() {
-        backButton.interactive = true;
-
-        const config = {targets: it, ...TRANS.IN};
+        audio.update();
 
         if (current) inner.update(current);
+
+        const config = {targets: it, ...TRANS.IN};
 
         await Promise.all([
             scaleUp(config).finished,
             fadeIn(config).finished,
         ]);
+
+        backButton.interactive = true;
+        backButton.once('click', close);
+
+        it.isOpen = true;
     }
 
     async function close() {
         backButton.interactive = false;
+
+        it.isOpen = false;
 
         const config = {targets: it, ...TRANS.OUT};
 
@@ -108,11 +118,13 @@ export function Option(it) {
 
         audioButton.on('click', onAudioClick);
 
+        return {update};
+
         function update() {
             const state = app.sound.mute();
 
-            open.visible = state;
-            close.visible = !state;
+            open.visible = !state;
+            close.visible = state;
         }
 
         function onAudioClick() {

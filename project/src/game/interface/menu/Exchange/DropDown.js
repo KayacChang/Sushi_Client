@@ -11,7 +11,7 @@ export function DropDown({label, btn, list, items}) {
 
     btn.on('click', onTrigger);
 
-    return Object.assign(it, {close});
+    return Object.assign(it, {close, update});
 
     function List(it) {
         it.children
@@ -36,10 +36,14 @@ export function DropDown({label, btn, list, items}) {
         }
     }
 
+    function update(index) {
+        label.text = items[index];
+    }
+
     function onSelect() {
         const index = this.name.split('@')[1];
 
-        label.text = items[index];
+        update(index);
 
         it.emit('select', index);
 

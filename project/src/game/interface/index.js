@@ -20,6 +20,8 @@ export function create() {
 
     app.control = it;
 
+    it.visible = false;
+
     return Object.assign(it, {main, menu});
 
     async function openMenu(page) {

@@ -108,6 +108,8 @@ export async function spin({reels, symbols}) {
             tasks.push(task);
 
             await waitByFrameTime(getSpinStopInterval(), () => skip === true);
+
+            app.sound.play('Stop');
         }
 
         await Promise.all(tasks);

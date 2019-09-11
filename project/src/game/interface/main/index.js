@@ -28,7 +28,7 @@ export function Main(it) {
         block.interactive = true;
 
         block.once('click', async () => {
-            await target.close();
+            if (target.isOpen) await target.close();
 
             block.interactive = false;
         });
