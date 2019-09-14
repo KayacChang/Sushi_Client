@@ -1,9 +1,9 @@
 import {property} from './Slot';
 
 export function Symbol(view, index, symbols) {
-    const offsetX = Number(symbols[0].x);
+    let offset = Number(symbols[0].x);
 
-    const stepSize = Math.abs(offsetX / property.stepPerSymbol);
+    const stepSize = Math.abs(offset / property.stepPerSymbol);
 
     let pos = index;
 
@@ -16,9 +16,20 @@ export function Symbol(view, index, symbols) {
             return pos;
         },
         set pos(newPos) {
-            pos = newPos;
+            this.update(newPos);
 
-            view.x = offsetX + (pos * stepSize);
+            pos = newPos;
+        },
+
+        get stepSize() {
+            return Math.abs(offset / property.stepPerSymbol);
+        },
+
+        get offset() {
+            return offset;
+        },
+        set offset(value) {
+            offset = value;
         },
 
         get x() {
@@ -54,6 +65,10 @@ export function Symbol(view, index, symbols) {
         },
         set visible(flag) {
             view.visible = flag;
+        },
+
+        update(newPos) {
+            view.x = offset + (newPos * stepSize);
         },
     };
 }

@@ -2,6 +2,7 @@ import {SpinButton} from './SpinButton';
 import {Status} from './Status';
 import {Option} from './Option';
 import {Button} from '../components';
+import {fadeIn, fadeOut} from "../../effect";
 
 const {assign} = Object;
 
@@ -20,7 +21,24 @@ export function Main(it) {
 
     Status(it.getChildByName('status'));
 
-    return assign(it, {menuButton, whenClickOutsideClose});
+    app.on('SpinStart', () => {
+        fadeOut({targets: it, alpha: 0.5});
+
+        optionButton.interactive = false;
+        menuButton.interactive = false;
+    });
+
+    app.on('Idle', () => {
+        fadeIn({targets: it});
+
+        optionButton.interactive = true;
+        menuButton.interactive = true;
+    });
+
+    return assign(it, {
+        menuButton,
+        whenClickOutsideClose,
+    });
 
     function whenClickOutsideClose(target) {
         const block = it.getChildByName('block');

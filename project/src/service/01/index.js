@@ -92,7 +92,7 @@ export function Service(prodKey) {
 
                     if (code === 18) {
                         msg.type = 'info';
-                        msg.text = translate('common:error.maintain');
+                        msg.text = app.translate('common:error.maintain');
                     }
 
                     return app.alert.error(msg);
@@ -113,7 +113,7 @@ export function Service(prodKey) {
 
         if (time.now - time.maintain > 0) {
             msg.type = 'info';
-            msg.text = translate('common:error.maintain');
+            msg.text = app.translate('common:error.maintain');
 
             clearInterval(time.timer);
 
@@ -122,7 +122,7 @@ export function Service(prodKey) {
 
         if (time.now - time.warning > 0) {
             msg.type = 'warning';
-            msg.title = translate('common:error.warning');
+            msg.title = app.translate('common:error.warning');
             msg.showCancelButton = false;
 
             time.warning.setMinutes(time.now.getMinutes() + 1);

@@ -30,7 +30,7 @@ export function Reel(view) {
 
     let pos = 0;
 
-    let state = State.Idle;
+    let state = State.Stop;
 
     let anim = undefined;
 

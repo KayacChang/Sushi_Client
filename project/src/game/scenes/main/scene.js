@@ -19,6 +19,18 @@ export function create({normalTable}) {
         textures: symbolConfig,
     });
 
+    slot.reels[1].symbols
+        .forEach((symbol, index, symbols) => {
+            const last = symbols[symbols.length - 1];
+
+            const offset = Number(last.x);
+
+            symbol.update = (newPos) => {
+                symbol.x = offset - (newPos * symbol.stepSize);
+            };
+        });
+
+
     const conveyors =
         scene.children
             .filter(isConveyor)

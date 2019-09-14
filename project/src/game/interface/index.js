@@ -5,6 +5,8 @@ import {addPackage} from 'pixi_fairygui';
 import {Main} from './main';
 import {Menu} from './menu';
 
+const {assign} = Object;
+
 export function create() {
     const create = addPackage(app, 'assets');
     const it = create('UserInterface');
@@ -22,7 +24,7 @@ export function create() {
 
     it.visible = false;
 
-    return Object.assign(it, {main, menu});
+    return assign(it, {main, menu});
 
     async function openMenu(page) {
         main.menuButton.interactive = false;

@@ -23,6 +23,8 @@ export function preprocess(data) {
         });
     });
 
+    result[1].reverse();
+
     return result;
 }
 
