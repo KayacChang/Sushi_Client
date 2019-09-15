@@ -1,5 +1,5 @@
 import {Text} from './Text';
-import {waitByFrameTime} from '@kayac/utils';
+import {nextFrame, waitByFrameTime} from '@kayac/utils';
 import {fadeIn, fadeOut} from '../../../effect';
 
 export function Bonus(it) {
@@ -50,7 +50,7 @@ export function Bonus(it) {
 
             it.off('click', immediate);
 
-            function init() {
+            async function init() {
                 if (skip) return;
 
                 it.alpha = 1;
@@ -58,6 +58,10 @@ export function Bonus(it) {
                 it.transition['show'].restart();
 
                 anim = it.transition['show'];
+
+                it.children
+                    .filter(({name}) => name && name.includes('light'))
+                    .forEach((it) => it.alpha = 0);
             }
 
             function showScores() {

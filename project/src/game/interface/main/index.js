@@ -2,7 +2,7 @@ import {SpinButton} from './SpinButton';
 import {Status} from './Status';
 import {Option} from './Option';
 import {Button} from '../components';
-import {fadeIn, fadeOut} from "../../effect";
+import {fadeIn, fadeOut} from '../../effect';
 
 const {assign} = Object;
 
