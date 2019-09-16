@@ -1,5 +1,5 @@
 import {Text} from './Text';
-import {nextFrame, waitByFrameTime} from '@kayac/utils';
+import {waitByFrameTime} from '@kayac/utils';
 import {fadeIn, fadeOut} from '../../../effect';
 
 export function Bonus(it) {
@@ -29,9 +29,14 @@ export function Bonus(it) {
 
         let anim = undefined;
 
+        const bgm = app.resource.get('Normal_BGM').data;
+        bgm.fade(1, 0, 1000);
+
         await transIn();
 
         await transOut();
+
+        bgm.fade(0, 1, 1000);
 
         it.interactive = false;
 
@@ -42,8 +47,22 @@ export function Bonus(it) {
 
             init();
 
-            await waitByFrameTime(2500, isSkip);
+            await waitByFrameTime(960, isSkip);
 
+            app.sound.play('Bonus_1');
+
+            await waitByFrameTime(240, isSkip);
+
+            app.sound.play('Bonus_2');
+
+            await waitByFrameTime(630, isSkip);
+
+            app.sound.play('Bonus_3');
+
+            await waitByFrameTime(710, isSkip);
+
+
+            app.sound.play('Bonus_4');
             anim = showScores();
 
             await waitByFrameTime(2000, isSkip);

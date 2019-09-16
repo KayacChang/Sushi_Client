@@ -5,7 +5,7 @@ import {Slot, Conveyor, Grid, PayLine, Bonus, BigWin} from './components';
 import {symbolConfig} from './data';
 import {logic, preprocess} from './logic';
 import {fadeIn, fadeOut} from '../../effect';
-import {isFunction, isString, wait, waitByFrameTime} from '@kayac/utils';
+import {isFunction, isString, waitByFrameTime} from '@kayac/utils';
 
 export function create({normalTable}) {
     const create = addPackage(app, 'main');
@@ -185,11 +185,17 @@ function FreeGame(it) {
 
         it.transition['anim'].restart();
 
-        await wait(1000);
+        app.sound.play('FreeGame_Open');
+
+        await waitByFrameTime(1000);
 
         func();
 
-        await wait(1500);
+        await waitByFrameTime(960);
+
+        app.sound.play('FreeGame_Close');
+
+        await waitByFrameTime(540);
 
         it.alpha = 0;
     }

@@ -20,9 +20,14 @@ export function BigWin(it) {
 
         let anim = undefined;
 
+        const bgm = app.resource.get('Normal_BGM').data;
+        bgm.fade(1, 0, 1000);
+
         await transIn();
 
         await transOut();
+
+        bgm.fade(0, 1, 1000);
 
         it.interactive = false;
 
@@ -33,7 +38,10 @@ export function BigWin(it) {
 
             init();
 
-            await waitByFrameTime(1250, isSkip);
+            await waitByFrameTime(1000, isSkip);
+            app.sound.play('BigWin_1');
+
+            await waitByFrameTime(250, isSkip);
 
             showScores();
 
@@ -92,6 +100,8 @@ export function BigWin(it) {
             close();
 
             await waitByFrameTime(1000, isSkip);
+
+            app.sound.play('BigWin_Sushi');
 
             reset();
 
