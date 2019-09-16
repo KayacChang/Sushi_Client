@@ -6,9 +6,13 @@ import STOP_MP3 from '../assets/sound/mp3/Stop_Spin.mp3';
 import STOP_OGG from '../assets/sound/ogg/Stop_Spin.ogg';
 import STOP_WEBM from '../assets/sound/webm/Stop_Spin.webm';
 
-import CONNECTION_MP3 from '../assets/sound/mp3/Special_Symbol_Connect.mp3';
-import CONNECTION_OGG from '../assets/sound/ogg/Special_Symbol_Connect.ogg';
-import CONNECTION_WEBM from '../assets/sound/webm/Special_Symbol_Connect.webm';
+import NORMAL_CONNECTION_MP3 from '../assets/sound/mp3/Normal_Symbol_Connect.mp3';
+import NORMAL_CONNECTION_OGG from '../assets/sound/ogg/Normal_Symbol_Connect.ogg';
+import NORMAL_CONNECTION_WEBM from '../assets/sound/webm/Normal_Symbol_Connect.webm';
+
+import SPECIAL_CONNECTION_MP3 from '../assets/sound/mp3/Special_Symbol_Connect.mp3';
+import SPECIAL_CONNECTION_OGG from '../assets/sound/ogg/Special_Symbol_Connect.ogg';
+import SPECIAL_CONNECTION_WEBM from '../assets/sound/webm/Special_Symbol_Connect.webm';
 
 import BONUS_1_MP3 from '../assets/sound/mp3/Bonus1.mp3';
 import BONUS_1_OGG from '../assets/sound/ogg/Bonus1.ogg';
@@ -69,11 +73,22 @@ export const sounds = [
     {
         type: 'sound',
         subType: 'effects',
-        name: 'Connect',
+        name: 'Normal_Connect',
         src: [
-            CONNECTION_WEBM,
-            CONNECTION_OGG,
-            CONNECTION_MP3,
+            NORMAL_CONNECTION_WEBM,
+            NORMAL_CONNECTION_OGG,
+            NORMAL_CONNECTION_MP3,
+        ],
+    },
+
+    {
+        type: 'sound',
+        subType: 'effects',
+        name: 'Special_Connect',
+        src: [
+            SPECIAL_CONNECTION_WEBM,
+            SPECIAL_CONNECTION_OGG,
+            SPECIAL_CONNECTION_MP3,
         ],
     },
 

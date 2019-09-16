@@ -102,14 +102,16 @@ export async function spin({reels, symbols}) {
                     .add({
                         pos: '-=' + offSet.pos,
                         duration: 500,
+
+                        begin() {
+                            app.sound.play('Stop');
+                        },
                     })
                     .finished;
 
             tasks.push(task);
 
             await waitByFrameTime(getSpinStopInterval(), () => skip === true);
-
-            app.sound.play('Stop');
         }
 
         await Promise.all(tasks);

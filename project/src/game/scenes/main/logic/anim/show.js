@@ -14,7 +14,7 @@ export async function show({result, reels, grid, payLine}) {
     const normal = results.filter(({line}) => line !== -1);
 
     if (normal.length > 0) {
-        app.sound.play('Connect');
+        app.sound.play('Normal_Connect');
 
         await execute(normal);
     }
@@ -22,7 +22,7 @@ export async function show({result, reels, grid, payLine}) {
     const scatters = results.filter(({line}) => line === -1);
 
     if (scatters.length > 0) {
-        app.sound.play('Connect');
+        app.sound.play('Special_Connect');
 
         await execute(scatters);
     }
