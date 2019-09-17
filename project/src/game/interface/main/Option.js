@@ -14,21 +14,20 @@ export function Option(it) {
 
     const backButton = Button(it.getChildByName('back'));
 
-
     const inner = Inner(it.getChildByName('inner'));
 
     ['speed', 'auto', 'bet']
         .forEach((name) => {
             const button = Button(it.getChildByName(name));
 
-            button.on('click', onOptionClick);
+            button.on('pointerup', onOptionClick);
         });
 
     const audio = Audio();
 
     const exchangeButton = Button(it.getChildByName('exchange'));
 
-    exchangeButton.on('click', openExchange);
+    exchangeButton.on('pointerup', openExchange);
 
     let current = undefined;
 
@@ -50,7 +49,7 @@ export function Option(it) {
         ]);
 
         backButton.interactive = true;
-        backButton.once('click', close);
+        backButton.once('pointerup', close);
 
         it.isOpen = true;
     }
@@ -69,7 +68,7 @@ export function Option(it) {
     }
 
     async function onOptionClick() {
-        backButton.off('click', close);
+        backButton.off('pointerup', close);
 
         const reset = await hide();
 
@@ -79,14 +78,14 @@ export function Option(it) {
 
         await inner.open();
 
-        backButton.once('click', prev);
+        backButton.once('pointerup', prev);
 
         async function prev() {
             await inner.close();
 
             await reset();
 
-            backButton.once('click', close);
+            backButton.once('pointerup', close);
         }
     }
 
@@ -116,7 +115,7 @@ export function Option(it) {
 
         const audioButton = Button(it.getChildByName('audio'));
 
-        audioButton.on('click', onAudioClick);
+        audioButton.on('pointerup', onAudioClick);
 
         return {update};
 

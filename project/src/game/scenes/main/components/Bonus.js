@@ -43,7 +43,7 @@ export function Bonus(it) {
         async function transIn() {
             let skip = false;
 
-            it.once('click', immediate);
+            it.once('pointerup', immediate);
 
             init();
 
@@ -61,13 +61,12 @@ export function Bonus(it) {
 
             await waitByFrameTime(710, isSkip);
 
-
             app.sound.play('Bonus_4');
             anim = showScores();
 
             await waitByFrameTime(2000, isSkip);
 
-            it.off('click', immediate);
+            it.off('pointerup', immediate);
 
             async function init() {
                 if (skip) return;
@@ -113,7 +112,7 @@ export function Bonus(it) {
         async function transOut() {
             let skip = false;
 
-            it.once('click', immediate);
+            it.once('pointerup', immediate);
 
             await waitByFrameTime(2750, isSkip);
 
@@ -123,7 +122,7 @@ export function Bonus(it) {
 
             reset();
 
-            it.off('click', immediate);
+            it.off('pointerup', immediate);
 
             function close() {
                 if (skip) return;

@@ -44,7 +44,7 @@ export function Inner(it) {
     function Select({btn, field}) {
         btn = Button(btn);
 
-        btn.on('click', onSelect);
+        btn.on('pointerup', onSelect);
 
         let activate = false;
 

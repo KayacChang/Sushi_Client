@@ -75,7 +75,7 @@ export function create({normalTable}) {
 
         feature.interactive = true;
 
-        feature.once('click', firstClick);
+        feature.once('pointerup', firstClick);
 
         async function firstClick() {
             app.sound.play('spin');

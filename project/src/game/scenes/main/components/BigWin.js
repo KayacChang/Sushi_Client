@@ -34,7 +34,7 @@ export function BigWin(it) {
         async function transIn() {
             let skip = false;
 
-            it.once('click', immediate);
+            it.once('pointerup', immediate);
 
             init();
 
@@ -47,7 +47,7 @@ export function BigWin(it) {
 
             await waitByFrameTime(2000, isSkip);
 
-            it.off('click', immediate);
+            it.off('pointerup', immediate);
 
             function init() {
                 if (skip) return;
@@ -82,7 +82,7 @@ export function BigWin(it) {
 
                 scores.incrementTo({score, duration: 1});
 
-                it.off('click', immediate);
+                it.off('pointerup', immediate);
             }
 
             function isSkip() {
@@ -93,7 +93,7 @@ export function BigWin(it) {
         async function transOut() {
             let skip = false;
 
-            it.once('click', immediate);
+            it.once('pointerup', immediate);
 
             await waitByFrameTime(2750, isSkip);
 
@@ -120,7 +120,7 @@ export function BigWin(it) {
 
                 scores.text = '';
 
-                it.off('click', immediate);
+                it.off('pointerup', immediate);
             }
 
             function immediate() {
