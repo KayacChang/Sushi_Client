@@ -51,8 +51,6 @@ export function Menu(it) {
 
         it.scale.set(0);
 
-        let isOpen = false;
-
         async function open() {
             if (it.interactive) return;
 
@@ -60,7 +58,7 @@ export function Menu(it) {
 
             await scaleUp({...config, x: [0, 1], y: [0, 1]}).finished;
 
-            isOpen = true;
+            it.isOpen = true;
         }
 
         async function close() {
@@ -68,11 +66,12 @@ export function Menu(it) {
 
             it.interactive = false;
 
-            isOpen = false;
+            it.isOpen = false;
         }
 
         return assign(it, {
-            open, close, isOpen,
+            open, close,
+            isOpen: false,
         });
     }
 
@@ -101,7 +100,7 @@ export function Menu(it) {
             currentPage = undefined;
         }
 
-        await background.close();
+        if (background.isOpen) await background.close();
 
         await nav.close();
 
