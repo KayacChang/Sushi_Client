@@ -18,15 +18,17 @@ export function SpinButton(it) {
 
     let state = undefined;
 
-    app.on('Idle', reset);
-
     app.on('QuickStop', () => app.user.auto = 0);
 
-    function reset() {
+    app.on('Idle', onIdle);
+
+    function onIdle() {
         state = State(it);
 
         state.next();
+    }
 
+    function reset() {
         if (!auto.done) {
             auto.count -= 1;
 
@@ -34,6 +36,8 @@ export function SpinButton(it) {
             //
         } else {
             app.user.auto = 0;
+
+            app.off('Idle', reset);
         }
     }
 
@@ -41,6 +45,8 @@ export function SpinButton(it) {
         app.sound.play('spin');
 
         await state.next();
+
+        app.once('Idle', reset);
     }
 }
 
