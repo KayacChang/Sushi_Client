@@ -10,17 +10,29 @@ import Text from 'pixi.js/lib/core/text/Text';
 export function SpinButton(it) {
     it = Button(it);
 
-    overwrite(it);
-
     const auto = Auto(it);
 
     it.on('pointerup', throttleBy(play));
 
     let state = undefined;
 
-    app.on('QuickStop', () => app.user.auto = 0);
+    app.on('QuickStop', () => {
+        app.user.auto = 0;
+
+        app.off('Idle', play);
+    });
 
     app.on('Idle', onIdle);
+
+    app.on('GameResult', ({totalWin}) => {
+        if (check(totalWin)) app.user.auto = 0;
+    });
+
+    app.on('UserAutoChange', () => {
+        auto.count = app.user.autoOptions[app.user.auto];
+    });
+
+    return it;
 
     function onIdle() {
         state = State(it);
@@ -28,25 +40,16 @@ export function SpinButton(it) {
         state.next();
     }
 
-    function reset() {
-        if (!auto.done) {
-            auto.count -= 1;
-
-            return play();
-            //
-        } else {
-            app.user.auto = 0;
-
-            app.off('Idle', reset);
-        }
-    }
-
     async function play() {
         app.sound.play('spin');
 
-        await state.next();
+        if (auto.count > 0) {
+            auto.count -= 1;
 
-        app.once('Idle', reset);
+            app.once('Idle', play);
+        }
+
+        await state.next();
     }
 }
 
@@ -58,6 +61,7 @@ function Auto(parent) {
         fontSize: 48,
         align: 'center',
         fontWeight: 'bold',
+        fill: '#FFAB00',
     };
 
     const it = new Text('1234', style);
@@ -70,34 +74,20 @@ function Auto(parent) {
 
     let count = 0;
 
-    app.on('UserAutoChange', () => {
-        it.count = getAuto();
-    });
-
     return defineProperties(it, {
-
-        done: {
-            get() {
-                return count === 0;
-            },
-        },
 
         count: {
             get() {
                 return count;
             },
             set(newCount) {
-                count = newCount;
+                count = newCount > 0 ? newCount : 0;
 
                 update();
             },
         },
 
     });
-
-    function getAuto() {
-        return app.user.autoOptions[app.user.auto];
-    }
 
     function update() {
         if (count === 0) return it.text = '';
@@ -106,40 +96,9 @@ function Auto(parent) {
     }
 }
 
-function overwrite(it) {
-    //
-    return defineProperties(it, {
-
-        enable: {
-            get() {
-                return it.interactive;
-            },
-            set(flag) {
-                it.interactive = flag;
-
-                setAllChildren(flag ? normal : gray);
-            },
-        },
-
-    });
-
-    function gray(it) {
-        it.tint = 0x9E9E9E;
-    }
-
-    function normal(it) {
-        it.tint = 0xFFFFFF;
-    }
-
-    function setAllChildren(func) {
-        it.children.map(func);
-
-        return it.children;
-    }
-}
-
 async function* State(it) {
-    const view = it.getChildByName('play');
+    const play = it.getChildByName('play');
+    const stop = it.getChildByName('stop');
 
     yield onNormal();
 
@@ -148,13 +107,15 @@ async function* State(it) {
     yield onStop();
 
     function onNormal() {
-        view.visible = true;
+        play.visible = true;
+        stop.visible = false;
 
         it.enable = !insufficientBalance();
     }
 
     async function onSpin() {
-        view.visible = false;
+        play.visible = false;
+        stop.visible = true;
 
         await Promise.all([
             send(),
@@ -196,4 +157,41 @@ async function send() {
 
 function insufficientBalance() {
     return app.user.cash < app.user.currentBet;
+}
+
+function check(scores) {
+    const condition = app.user.autoStopCondition;
+
+    return [
+        onAnyWin,
+        onSingleWinOfAtLeast,
+        ifCashIncreasesBy,
+        ifCashDecreasesBy,
+    ].some(isTrue);
+
+    function isTrue(func) {
+        return func() === true;
+    }
+
+    function onAnyWin() {
+        if (condition['on_any_win']) return scores > 0;
+    }
+
+    function onSingleWinOfAtLeast() {
+        const threshold = condition['on_single_win_of_at_least'];
+
+        if (threshold) return scores > threshold;
+    }
+
+    function ifCashIncreasesBy() {
+        const threshold = condition['if_cash_increases_by'];
+
+        if (threshold) return app.user.cash >= threshold;
+    }
+
+    function ifCashDecreasesBy() {
+        const threshold = condition['if_cash_decreases_by'];
+
+        if (threshold) return app.user.cash <= threshold;
+    }
 }

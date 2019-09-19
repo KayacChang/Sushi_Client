@@ -56,9 +56,9 @@ export function Menu(it) {
 
             it.interactive = true;
 
-            await scaleUp({...config, x: [0, 1], y: [0, 1]}).finished;
-
             it.isOpen = true;
+
+            await scaleUp({...config, x: [0, 1], y: [0, 1]}).finished;
         }
 
         async function close() {

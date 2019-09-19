@@ -67,7 +67,6 @@ export async function show({result, reels, grid, payLine}) {
         const results = getResultGen();
 
         let skip = false;
-
         (
             async function loop() {
                 close();

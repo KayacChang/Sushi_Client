@@ -17,11 +17,17 @@ export function Option(it) {
 
     const inner = Inner(it.getChildByName('inner'));
 
+    const frame = it.getChildByName(`state@frame`);
+
+    const state = {};
+
     ['speed', 'auto', 'bet']
         .forEach((name) => {
             const button = Button(it.getChildByName(name));
 
             button.on('pointerup', onOptionClick);
+
+            state[name] = it.getChildByName(`state@${name}`);
         });
 
     const audio = Audio();
@@ -40,14 +46,14 @@ export function Option(it) {
     async function open() {
         audio.update();
 
-        if (current) inner.update(current);
-
         const config = {targets: it, ...TRANS.IN};
 
         await Promise.all([
             scaleUp(config).finished,
             fadeIn(config).finished,
         ]);
+
+        if (current) await openInner();
 
         backButton.interactive = true;
 
@@ -61,10 +67,30 @@ export function Option(it) {
 
         const config = {targets: it, ...TRANS.OUT};
 
+        if (current) await closeInner();
+
         await Promise.all([
             scaleDown(config).finished,
             fadeOut(config).finished,
         ]);
+    }
+
+    async function openInner() {
+        const targets = [frame, state[current]];
+
+        scaleUp({targets, ...TRANS.IN});
+
+        inner.update(current);
+
+        await inner.open();
+    }
+
+    async function closeInner() {
+        const targets = [frame, state[current]];
+
+        scaleDown({targets, ...TRANS.OUT});
+
+        await inner.close();
     }
 
     async function onOptionClick() {
@@ -74,16 +100,16 @@ export function Option(it) {
 
         current = this.name;
 
-        inner.update(current);
-
-        await inner.open();
+        await openInner();
 
         backButton.once('pointerup', prev);
 
         async function prev() {
-            await inner.close();
+            await closeInner();
 
             await reset();
+
+            current = undefined;
 
             backButton.on('pointerup', close);
         }

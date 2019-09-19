@@ -41,9 +41,6 @@ export function logic({slot, grid, payLine, showBonus, showBigWin, showFreeGame,
             freeGame,
         } = result;
 
-        const diff = app.user.cash - cash;
-        if (app.user.auto) app.user.totalWin += diff;
-
         if (normalGame.hasLink) {
             log('onNormalGame =============');
             table(normalGame);
@@ -53,6 +50,7 @@ export function logic({slot, grid, payLine, showBonus, showBigWin, showFreeGame,
             await NormalGame({
                 result: normalGame,
                 reels: slot.reels,
+
                 grid,
                 payLine,
                 showBonus,
@@ -79,7 +77,6 @@ export function logic({slot, grid, payLine, showBonus, showBigWin, showFreeGame,
                         showBonus,
                     });
 
-                app.user.lastWin = scores;
                 totalScores += scores;
             }
 
@@ -99,49 +96,6 @@ export function logic({slot, grid, payLine, showBonus, showBigWin, showFreeGame,
     function clear(scores) {
         app.user.lastWin = scores;
         app.user.cash += scores;
-
-        if (check(scores)) {
-            app.user.auto = 0;
-
-            app.user.totalWin = 0;
-        }
-    }
-
-    function check(scores) {
-        const condition = app.user.autoStopCondition;
-
-        return [
-            onAnyWin,
-            onSingleWinOfAtLeast,
-            ifCashIncreasesBy,
-            ifCashDecreasesBy,
-        ].some(isTrue);
-
-        function isTrue(func) {
-            return func() === true;
-        }
-
-        function onAnyWin() {
-            if (condition['on_any_win']) return scores > 0;
-        }
-
-        function onSingleWinOfAtLeast() {
-            const threshold = condition['on_single_win_of_at_least'];
-
-            if (threshold) return scores > threshold;
-        }
-
-        function ifCashIncreasesBy() {
-            const threshold = condition['if_cash_increases_by'];
-
-            if (threshold) return app.user.totalWin >= threshold;
-        }
-
-        function ifCashDecreasesBy() {
-            const threshold = condition['if_cash_decreases_by'];
-
-            if (threshold) return app.user.totalWin <= threshold;
-        }
     }
 }
 

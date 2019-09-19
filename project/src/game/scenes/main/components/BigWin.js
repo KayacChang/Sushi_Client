@@ -20,6 +20,8 @@ export function BigWin(it) {
 
         let anim = undefined;
 
+        let sound = undefined;
+
         const bgm = app.resource.get('Normal_BGM').data;
         bgm.fade(1, 0, 1000);
 
@@ -39,7 +41,7 @@ export function BigWin(it) {
             init();
 
             await waitByFrameTime(1000, isSkip);
-            app.sound.play('BigWin_1');
+            if (!skip) sound = app.sound.play('BigWin_1');
 
             await waitByFrameTime(250, isSkip);
 
@@ -74,6 +76,8 @@ export function BigWin(it) {
 
                 if (anim) anim.pause();
 
+                if (sound) sound.pause();
+
                 it.transition['idle'].restart();
 
                 anim = it.transition['idle'];
@@ -101,7 +105,7 @@ export function BigWin(it) {
 
             await waitByFrameTime(1000, isSkip);
 
-            app.sound.play('BigWin_Sushi');
+            sound = app.sound.play('BigWin_Sushi');
 
             reset();
 
@@ -127,6 +131,8 @@ export function BigWin(it) {
                 skip = true;
 
                 if (anim) anim.pause();
+
+                if (sound) sound.pause();
 
                 reset();
             }

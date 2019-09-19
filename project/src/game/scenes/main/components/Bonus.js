@@ -29,6 +29,8 @@ export function Bonus(it) {
 
         let anim = undefined;
 
+        let sound = undefined;
+
         const bgm = app.resource.get('Normal_BGM').data;
         bgm.fade(1, 0, 1000);
 
@@ -49,19 +51,19 @@ export function Bonus(it) {
 
             await waitByFrameTime(960, isSkip);
 
-            app.sound.play('Bonus_1');
+            if (!skip) sound = app.sound.play('Bonus_1');
 
             await waitByFrameTime(240, isSkip);
 
-            app.sound.play('Bonus_2');
+            if (!skip) sound = app.sound.play('Bonus_2');
 
             await waitByFrameTime(630, isSkip);
 
-            app.sound.play('Bonus_3');
+            if (!skip) sound = app.sound.play('Bonus_3');
 
             await waitByFrameTime(710, isSkip);
 
-            app.sound.play('Bonus_4');
+            if (!skip) sound = app.sound.play('Bonus_4');
             anim = showScores();
 
             await waitByFrameTime(2000, isSkip);
@@ -93,7 +95,8 @@ export function Bonus(it) {
             function immediate() {
                 skip = true;
 
-                anim.pause();
+                if (anim) anim.pause();
+                if (sound) sound.pause();
 
                 it.alpha = 1;
 
