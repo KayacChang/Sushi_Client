@@ -73,6 +73,8 @@ export function Option(it) {
             scaleDown(config).finished,
             fadeOut(config).finished,
         ]);
+
+        it.emit('Closed');
     }
 
     async function openInner() {

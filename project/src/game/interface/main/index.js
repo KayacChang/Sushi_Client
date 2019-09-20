@@ -11,7 +11,7 @@ export function Main(it) {
 
     const optionButton = Button(it.getChildByName('option'));
 
-    optionButton.on('pointerup', openOption);
+    optionButton.once('pointerup', openOption);
 
     const option = Option(it.getChildByName('optionMenu'));
 
@@ -45,17 +45,27 @@ export function Main(it) {
 
         block.interactive = true;
 
-        block.once('pointerup', async () => {
-            if (target.isOpen) await target.close();
+        block.once('pointerup', close);
 
+        return () => block.off(close);
+
+        async function close() {
             block.interactive = false;
-        });
+
+            if (target.isOpen) await target.close();
+        }
     }
 
     async function openOption() {
         await option.open();
 
-        whenClickOutsideClose(option);
+        const off = whenClickOutsideClose(option);
+
+        option.once('Closed', () => {
+            off();
+
+            optionButton.once('pointerup', openOption);
+        });
     }
 }
 

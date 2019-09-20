@@ -1,6 +1,8 @@
 import {move} from '../../../effect';
 import {NavButton} from './NavButton';
 
+const {assign} = Object;
+
 export function Nav(it) {
     const background = Background(it.getChildByName('background'));
 
@@ -42,28 +44,30 @@ export function Nav(it) {
         app.alert.leave();
     });
 
-    let isOpen = false;
-
     async function open() {
+        app.sound.play('spin');
+
+        it.isOpen = true;
+
         await background.open();
 
         await Promise.all(
-            buttons.map((btn) => btn.open())
+            buttons.map((btn) => btn.open()),
         );
 
         backButton.once('pointerup', () => it.emit('close'));
-
-        isOpen = true;
     }
 
     async function close() {
+        app.sound.play('spin');
+
         await Promise.all(
             buttons.map((btn) => btn.close())
         );
 
         await background.close();
 
-        isOpen = false;
+        it.isOpen = false;
     }
 
     function Background(it) {
@@ -74,10 +78,7 @@ export function Nav(it) {
         };
 
         async function moveTo(options) {
-            await move({
-                ...(config),
-                ...(options),
-            }).finished;
+            await move({...(config), ...(options)}).finished;
         }
 
         const width = it.width;
@@ -94,11 +95,15 @@ export function Nav(it) {
             if (!it.interactive) return;
 
             await moveTo({x: `+= ${width}`});
+
             it.interactive = false;
         }
 
         return Object.assign(it, {open, close});
     }
 
-    return Object.assign(it, {open, close, isOpen});
+    return assign(it, {
+        open, close,
+        isOpen: false,
+    });
 }

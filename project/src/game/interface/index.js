@@ -18,8 +18,6 @@ export function create() {
 
     main.on('OpenExchange', () => openMenu('exchange'));
 
-    menu.on('Closed', onMenuClose);
-
     app.control = it;
 
     it.visible = false;
@@ -29,13 +27,17 @@ export function create() {
     async function openMenu(page) {
         main.menuButton.interactive = false;
 
-        main.whenClickOutsideClose(menu);
-
         await menu.open(page);
-    }
 
-    function onMenuClose() {
-        main.menuButton.interactive = true;
+        const off = main.whenClickOutsideClose(menu);
+
+        menu.once('Closed', onMenuClose);
+
+        function onMenuClose() {
+            off();
+
+            main.menuButton.interactive = true;
+        }
     }
 }
 
