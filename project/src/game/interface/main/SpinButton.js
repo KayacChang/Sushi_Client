@@ -18,17 +18,13 @@ export function SpinButton(it) {
 
     let originCash = app.user.cash;
 
-    app.on('QuickStop', () => {
-        app.user.auto = 0;
+    let scores = 0;
 
-        app.off('Idle', play);
-    });
+    app.on('QuickStop', () => app.user.auto = 0);
 
     app.on('Idle', onIdle);
 
-    app.on('GameResult', ({totalWin}) => {
-        if (check(totalWin)) app.user.auto = 0;
-    });
+    app.on('GameResult', ({totalWin}) => scores = totalWin);
 
     app.on('UserAutoChange', () => {
         originCash = app.user.cash;
@@ -39,19 +35,23 @@ export function SpinButton(it) {
     return it;
 
     function onIdle() {
-        if (auto.count === 0) app.user.auto = 0;
-
         state = State(it);
 
         state.next();
+
+        if (check(scores)) auto.count = 0;
+
+        if (auto.count > 0) {
+            play();
+        } else {
+            app.user.auto = 0;
+        }
     }
 
     async function play() {
         app.sound.play('spin');
 
         if (auto.count > 0) auto.count -= 1;
-
-        if (auto.count > 0) app.once('Idle', play);
 
         await state.next();
     }
