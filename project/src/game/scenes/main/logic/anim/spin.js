@@ -1,5 +1,5 @@
 import anime from 'animejs';
-import {waitByFrameTime, wait, nextFrame} from '@kayac/utils';
+import {waitByFrameTime, nextFrame} from '@kayac/utils';
 
 import {State} from '../../components';
 
@@ -44,7 +44,7 @@ export async function spin({reels, symbols}) {
                         duration: 34000,
                     });
 
-            await wait(360);
+            await waitByFrameTime(360);
         }
     }
 
