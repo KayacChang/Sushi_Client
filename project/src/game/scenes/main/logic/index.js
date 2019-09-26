@@ -63,6 +63,8 @@ export function logic({slot, grid, payLine, showBonus, showBigWin, showFreeGame,
         if (scores > 0) await waitByFrameTime(60);
 
         if (freeGame) {
+            app.user.lastWin = 0;
+
             await showFreeGame();
 
             let totalScores = 0;
@@ -80,14 +82,16 @@ export function logic({slot, grid, payLine, showBonus, showBigWin, showFreeGame,
                 totalScores += scores;
             }
 
-            if (isBigWin(totalScores)) await showBigWin(totalScores);
+            if (isBigWin(totalScores)) {
+                await waitByFrameTime(600);
+
+                await showBigWin(totalScores);
+            }
 
             clear(totalScores);
 
             await hideFreeGame();
         }
-
-        app.user.cash = cash;
 
         log('Round Complete...');
         app.emit('Idle');
