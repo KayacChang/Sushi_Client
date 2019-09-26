@@ -1,4 +1,4 @@
-import {log, table, divide, waitByFrameTime} from '@kayac/utils';
+import {log, err, table, divide, waitByFrameTime} from '@kayac/utils';
 
 import {NormalGame} from './flow';
 
@@ -80,6 +80,8 @@ export function logic({slot, grid, payLine, showBonus, showBigWin, showFreeGame,
                     });
 
                 totalScores += scores;
+
+                app.user.lastWin = totalScores;
             }
 
             if (isBigWin(totalScores)) {
@@ -93,6 +95,15 @@ export function logic({slot, grid, payLine, showBonus, showBigWin, showFreeGame,
             await hideFreeGame();
         }
 
+        if (app.user.cash !== cash) {
+            err(`
+            Inconsistent data between Client App and Server:
+            Cash
+                Client: ${app.user.cash},
+                Server: ${cash},
+            `);
+        }
+
         log('Round Complete...');
         app.emit('Idle');
     }
@@ -102,4 +113,3 @@ export function logic({slot, grid, payLine, showBonus, showBigWin, showFreeGame,
         app.user.cash += scores;
     }
 }
-
