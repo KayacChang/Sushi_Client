@@ -1,8 +1,8 @@
 import {spin, show} from '../anim';
 import {preprocess} from '../index';
 
-export async function NormalGame({result, reels, grid, payLine, showBonus}) {
-    const {hasLink, scores, bonus} = result;
+export async function NormalGame({result, reels, grid, payLine}) {
+    const {hasLink, scores} = result;
 
     const symbols = preprocess(result.symbols);
 
@@ -10,10 +10,6 @@ export async function NormalGame({result, reels, grid, payLine, showBonus}) {
 
     if (hasLink) {
         await show({result, reels, grid, payLine});
-    }
-
-    if (bonus) {
-        await showBonus(bonus);
     }
 
     return scores;

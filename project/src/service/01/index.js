@@ -330,7 +330,9 @@ export function Service(prodKey) {
 
         const hasLink = results.length > 0;
 
-        const scores = data['scores'];
+        const scores = results
+            .map(({scores}) => scores)
+            .reduce((a, b) => a + b, 0);
 
         const bonus = (data['bonusscore'] > 0) && data['bonusscore'];
 

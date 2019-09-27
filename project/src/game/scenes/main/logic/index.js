@@ -53,16 +53,29 @@ export function logic({slot, grid, payLine, showBonus, showBigWin, showFreeGame,
 
                 grid,
                 payLine,
-                showBonus,
             });
 
-        if (isBigWin(scores)) await showBigWin(scores);
+        if (isBigWin(scores)) {
+            await waitByFrameTime(360);
+
+            await showBigWin(scores);
+        }
 
         clear(scores);
 
-        if (scores > 0) await waitByFrameTime(60);
+        const {bonus} = normalGame;
+
+        if (bonus) {
+            await waitByFrameTime(360);
+
+            await showBonus(bonus);
+
+            clear(bonus);
+        }
 
         if (freeGame) {
+            await waitByFrameTime(1200);
+
             app.user.lastWin = 0;
 
             await showFreeGame();
@@ -76,16 +89,27 @@ export function logic({slot, grid, payLine, showBonus, showBigWin, showFreeGame,
                         reels: slot.reels,
                         grid,
                         payLine,
-                        showBonus,
                     });
 
                 totalScores += scores;
 
                 app.user.lastWin = totalScores;
+
+                const {bonus} = round;
+
+                if (bonus) {
+                    await waitByFrameTime(360);
+
+                    await showBonus(bonus);
+
+                    totalScores += bonus;
+
+                    app.user.lastWin = totalScores;
+                }
             }
 
             if (isBigWin(totalScores)) {
-                await waitByFrameTime(600);
+                await waitByFrameTime(360);
 
                 await showBigWin(totalScores);
             }
