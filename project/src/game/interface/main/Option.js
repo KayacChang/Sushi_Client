@@ -87,7 +87,7 @@ export function Option(it) {
         if (current === 'bet') {
             app.user.betOptions.forEach((option, index) => {
                 if (option > app.user.cash) {
-                    inner.selects[index].enable = false;
+                    inner.selects[index].visible = false;
                 }
             });
         }
