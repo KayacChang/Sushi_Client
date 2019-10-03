@@ -16,7 +16,7 @@ export function Inner(it) {
             .reduce(pre, [])
             .map(Select);
 
-    return assign(it, {open, close, update});
+    return assign(it, {open, close, update, selects});
 
     function pre(selects, child) {
         const {name} = child;

@@ -32,6 +32,8 @@ export function SpinButton(it) {
         auto.count = app.user.autoOptions[app.user.auto];
     });
 
+    app.on('UserBetChange', onIdle);
+
     return it;
 
     function onIdle() {

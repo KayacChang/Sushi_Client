@@ -84,6 +84,14 @@ export function Option(it) {
 
         inner.update(current);
 
+        if (current === 'bet') {
+            app.user.betOptions.forEach((option, index) => {
+                if (option > app.user.cash) {
+                    inner.selects[index].enable = false;
+                }
+            });
+        }
+
         await inner.open();
     }
 
