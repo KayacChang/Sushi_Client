@@ -1,15 +1,26 @@
 import {Text} from './Text';
 import {fadeIn, fadeOut} from '../../../effect';
 
-const {assign} = Object;
+const {assign, defineProperties} = Object;
 
 export function Count(it) {
-    const text = Text(
+    const counter = Text(
         it.getChildByName('pos'), {
             font: '32px Number',
         });
 
-    it.addChild(text);
+    it.addChild(counter);
+
+    defineProperties(it, {
+        text: {
+            get() {
+                return counter.text;
+            },
+            set(value) {
+                counter.text = value;
+            },
+        },
+    });
 
     return assign(it, {show, hide});
 
