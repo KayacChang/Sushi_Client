@@ -28,7 +28,12 @@ export function preprocess(data) {
     return result;
 }
 
-export function logic({slot, grid, payLine, showBonus, showBigWin, showFreeGame, hideFreeGame}) {
+export function logic(args) {
+    const {
+        slot, grid, payLine, count,
+        showBonus, showBigWin, showFreeGame, hideFreeGame,
+    } = args;
+
     app.on('GameResult', onGameResult);
 
     async function onGameResult(result) {
@@ -80,9 +85,15 @@ export function logic({slot, grid, payLine, showBonus, showBigWin, showFreeGame,
 
             await showFreeGame();
 
+            count.show();
+
             let totalScores = 0;
 
+            let lastCount = freeGame.length;
+
             for (const round of freeGame) {
+                count.text = lastCount;
+
                 const scores =
                     await NormalGame({
                         result: round,
@@ -90,6 +101,8 @@ export function logic({slot, grid, payLine, showBonus, showBigWin, showFreeGame,
                         grid,
                         payLine,
                     });
+
+                lastCount -= 1;
 
                 totalScores += scores;
 
@@ -115,6 +128,8 @@ export function logic({slot, grid, payLine, showBonus, showBigWin, showFreeGame,
             }
 
             clear(totalScores);
+
+            count.hide();
 
             await hideFreeGame();
         }

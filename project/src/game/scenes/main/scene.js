@@ -1,6 +1,6 @@
 import {addPackage} from 'pixi_fairygui';
 
-import {Slot, Conveyor, Grid, PayLine, Bonus, BigWin} from './components';
+import {Slot, Conveyor, Grid, PayLine, Bonus, BigWin, Count} from './components';
 
 import {symbolConfig} from './data';
 import {logic, preprocess} from './logic';
@@ -25,11 +25,9 @@ export function create({normalTable}) {
 
             const offset = Number(last.x);
 
-            symbol.update = (newPos) => {
+            symbol.update = (newPos) =>
                 symbol.x = offset - (newPos * symbol.stepSize);
-            };
         });
-
 
     const conveyors =
         scene.children
@@ -39,6 +37,7 @@ export function create({normalTable}) {
     const bonus = Bonus(select('bonus'));
     const bigWin = BigWin(select('bigWin'));
     const freeGame = FreeGame(select('freeGame'));
+    const count = Count(select('count'));
 
     const grid = Grid(select('grid'));
 
@@ -48,6 +47,7 @@ export function create({normalTable}) {
         slot,
         grid,
         payLine,
+        count,
 
         showBonus,
         showBigWin,

@@ -5,6 +5,7 @@ export * from './PayLine';
 export * from './Text';
 export * from './Bonus';
 export * from './BigWin';
+export * from './Count';
 
 export function pauseAll(it) {
     Object
