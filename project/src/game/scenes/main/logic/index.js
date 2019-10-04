@@ -66,7 +66,7 @@ export function logic(args) {
             await showBigWin(scores);
         }
 
-        clear(scores);
+        await clear(scores);
 
         const {bonus} = normalGame;
 
@@ -75,7 +75,7 @@ export function logic(args) {
 
             await showBonus(bonus);
 
-            clear(bonus);
+            await clear(bonus);
         }
 
         if (freeGame) {
@@ -127,7 +127,7 @@ export function logic(args) {
                 await showBigWin(totalScores);
             }
 
-            clear(totalScores);
+            await clear(totalScores);
 
             count.hide();
 
@@ -147,8 +147,10 @@ export function logic(args) {
         app.emit('Idle');
     }
 
-    function clear(scores) {
+    async function clear(scores) {
         app.user.lastWin = scores;
         app.user.cash += scores;
+
+        if (scores) await waitByFrameTime(720);
     }
 }
