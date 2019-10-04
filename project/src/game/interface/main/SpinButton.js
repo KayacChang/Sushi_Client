@@ -59,16 +59,6 @@ export function SpinButton(it) {
     }
 
     async function play() {
-        if (insufficientBalance()) {
-            const {value} =
-                await app.alert
-                    .request({title: app.translate('common:helper.insufficientBalance')});
-
-            if (value) it.emit('OpenExchange');
-
-            return;
-        }
-
         playing = true;
 
         app.sound.play('spin');
@@ -182,7 +172,7 @@ async function* State(it) {
         stop.visible = true;
 
         await Promise.all([
-            send(),
+            send(it),
             animation(it),
         ]);
     }
@@ -207,7 +197,17 @@ async function animation(it) {
         .finished;
 }
 
-async function send() {
+async function send(it) {
+    if (insufficientBalance()) {
+        const {value} =
+            await app.alert
+                .request({title: app.translate('common:helper.insufficientBalance')});
+
+        if (value) it.emit('OpenExchange');
+
+        return;
+    }
+
     app.user.cash -= app.user.currentBet;
     app.user.lastWin = 0;
 
