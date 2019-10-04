@@ -20,6 +20,8 @@ export function SpinButton(it) {
 
     let scores = 0;
 
+    let playing = false;
+
     app.on('QuickStop', () => app.user.auto = 0);
 
     app.on('Idle', onIdle);
@@ -48,8 +50,10 @@ export function SpinButton(it) {
         if (check(scores)) auto.count = 0;
 
         if (auto.count > 0) {
-            play();
+            if (playing) play();
         } else {
+            playing = false;
+
             app.user.auto = 0;
         }
     }
@@ -64,6 +68,8 @@ export function SpinButton(it) {
 
             return;
         }
+
+        playing = true;
 
         app.sound.play('spin');
 
@@ -167,6 +173,8 @@ async function* State(it) {
     function onNormal() {
         play.visible = true;
         stop.visible = false;
+
+        it.enable = true;
     }
 
     async function onSpin() {
