@@ -167,8 +167,6 @@ async function* State(it) {
     function onNormal() {
         play.visible = true;
         stop.visible = false;
-
-        // it.enable = !insufficientBalance();
     }
 
     async function onSpin() {
