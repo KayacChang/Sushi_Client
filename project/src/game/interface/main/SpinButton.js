@@ -55,6 +55,16 @@ export function SpinButton(it) {
     }
 
     async function play() {
+        if (insufficientBalance()) {
+            const {value} =
+                await app.alert
+                    .request({title: app.translate('common:helper.insufficientBalance')});
+
+            if (value) it.emit('OpenExchange');
+
+            return;
+        }
+
         app.sound.play('spin');
 
         if (auto.count > 0) auto.count -= 1;
@@ -158,7 +168,7 @@ async function* State(it) {
         play.visible = true;
         stop.visible = false;
 
-        it.enable = !insufficientBalance();
+        // it.enable = !insufficientBalance();
     }
 
     async function onSpin() {
