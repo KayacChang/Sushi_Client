@@ -193,11 +193,9 @@ async function animation(it) {
 
 async function send(it) {
     if (insufficientBalance()) {
-        const {value} = await app.alert.request({
+        await app.alert.request({
             title: app.translate('common:helper.insufficientBalance'),
         });
-
-        if (value) it.emit('OpenExchange');
 
         return;
     }

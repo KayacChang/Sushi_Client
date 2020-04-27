@@ -16,8 +16,6 @@ export function create() {
 
     main.menuButton.on('pointerup', () => openMenu());
 
-    main.on('OpenExchange', () => openMenu('exchange'));
-
     app.control = it;
 
     it.visible = false;
@@ -40,5 +38,3 @@ export function create() {
         }
     }
 }
-
-

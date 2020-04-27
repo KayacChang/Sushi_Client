@@ -10,6 +10,8 @@ async function main() {
     try {
         document.title = 'For Every Gamer | 61 Studio';
 
+        global.app = app;
+
         app.translate = await i18n.init(process.env.I18N_URL);
         app.alert = Swal(app.translate);
         app.service = new Service(process.env.SERVER_URL);
@@ -30,13 +32,11 @@ async function main() {
 
         enableFullScreenMask();
 
-        await app.service.login({key});
-
         //  Import Main Scene
         const [Interface, MainScene, initData] = await Promise.all([
             import('./game/interface'),
             import('./game/scenes/main'),
-            app.service.init({key}),
+            app.service.init(),
         ]);
 
         app.user.id = initData['player']['id'];
@@ -48,7 +48,7 @@ async function main() {
 
         await app.resource.load(Interface, MainScene);
 
-        const scene = MainScene.create(initData);
+        const scene = MainScene.create(initData['reel']);
         const ui = Interface.create();
 
         scene.addChild(ui);

@@ -1,17 +1,25 @@
 import {addPackage} from 'pixi_fairygui';
 
-import {Slot, Conveyor, Grid, PayLine, Bonus, BigWin, Count} from './components';
+import {
+    Slot,
+    Conveyor,
+    Grid,
+    PayLine,
+    Bonus,
+    BigWin,
+    Count,
+} from './components';
 
 import {symbolConfig} from './data';
 import {logic, preprocess} from './logic';
 import {fadeIn, fadeOut} from '../../effect';
 import {isFunction, isString, waitByFrameTime} from '@kayac/utils';
 
-export function create({normalTable}) {
+export function create({normalreel}) {
     const create = addPackage(app, 'main');
     const scene = create('MainScene');
 
-    const reelStrips = preprocess(normalTable);
+    const reelStrips = preprocess(normalreel);
 
     const slot = Slot({
         view: scene,
@@ -19,20 +27,16 @@ export function create({normalTable}) {
         textures: symbolConfig,
     });
 
-    slot.reels[1].symbols
-        .forEach((symbol, index, symbols) => {
-            const last = symbols[symbols.length - 1];
+    slot.reels[1].symbols.forEach((symbol, index, symbols) => {
+        const last = symbols[symbols.length - 1];
 
-            const offset = Number(last.x);
+        const offset = Number(last.x);
 
-            symbol.update = (newPos) =>
-                symbol.x = offset - (newPos * symbol.stepSize);
-        });
+        symbol.update = (newPos) =>
+            (symbol.x = offset - newPos * symbol.stepSize);
+    });
 
-    const conveyors =
-        scene.children
-            .filter(isConveyor)
-            .map(Conveyor);
+    const conveyors = scene.children.filter(isConveyor).map(Conveyor);
 
     const bonus = Bonus(select('bonus'));
     const bigWin = BigWin(select('bigWin'));
@@ -64,8 +68,7 @@ export function create({normalTable}) {
     async function onIdle() {
         scene.transition['anim'].pause();
 
-        const loadScene =
-            app.stage.getChildByName('LoadScene');
+        const loadScene = app.stage.getChildByName('LoadScene');
 
         await fadeOut({targets: loadScene, duration: 3000}).finished;
 
@@ -156,11 +159,13 @@ export function create({normalTable}) {
             function onReelStateChange(state) {
                 const conveyor = conveyors[reel.index];
 
-                return (
-                    (state === 'spin') ? conveyor.start() :
-                        (state === 'stop') ? conveyor.stop() :
-                            undefined
-                );
+                if (state === 'spin') {
+                    conveyor.start();
+                }
+
+                if (state === 'stop') {
+                    conveyor.stop();
+                }
             }
         }
     }
@@ -171,7 +176,6 @@ export function create({normalTable}) {
 
     function select(arg) {
         if (isString(arg)) return scene.getChildByName(arg);
-
         else if (isFunction(arg)) return scene.children.filter(arg);
     }
 }
@@ -200,5 +204,3 @@ function FreeGame(it) {
         it.alpha = 0;
     }
 }
-
-

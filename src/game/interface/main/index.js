@@ -15,11 +15,7 @@ export function Main(it) {
 
     const option = Option(it.getChildByName('optionMenu'));
 
-    option.on('OpenExchange', () => it.emit('OpenExchange'));
-
-    const spin = SpinButton(it.getChildByName('spin'));
-
-    spin.on('OpenExchange', () => it.emit('OpenExchange'));
+    SpinButton(it.getChildByName('spin'));
 
     Status(it.getChildByName('status'));
 
@@ -70,5 +66,3 @@ export function Main(it) {
         });
     }
 }
-
-

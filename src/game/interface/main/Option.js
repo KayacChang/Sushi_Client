@@ -21,26 +21,22 @@ export function Option(it) {
 
     const state = {};
 
-    ['speed', 'auto', 'bet']
-        .forEach((name) => {
-            const button = Button(it.getChildByName(name));
+    ['speed', 'auto', 'bet'].forEach((name) => {
+        const button = Button(it.getChildByName(name));
 
-            button.on('pointerup', onOptionClick);
+        button.on('pointerup', onOptionClick);
 
-            state[name] = it.getChildByName(`state@${name}`);
-        });
+        state[name] = it.getChildByName(`state@${name}`);
+    });
 
     const audio = Audio();
-
-    const exchangeButton = Button(it.getChildByName('exchange'));
-
-    exchangeButton.on('pointerup', openExchange);
 
     let current = undefined;
 
     return assign(it, {
         isOpen: false,
-        open, close,
+        open,
+        close,
     });
 
     async function open() {
@@ -48,10 +44,7 @@ export function Option(it) {
 
         const config = {targets: it, ...TRANS.IN};
 
-        await Promise.all([
-            scaleUp(config).finished,
-            fadeIn(config).finished,
-        ]);
+        await Promise.all([scaleUp(config).finished, fadeIn(config).finished]);
 
         if (current) await openInner();
 
@@ -126,9 +119,7 @@ export function Option(it) {
     }
 
     async function hide() {
-        const targets =
-            it.children
-                .filter(({name}) => match(name));
+        const targets = it.children.filter(({name}) => match(name));
 
         await scaleDown({targets, ...TRANS.OUT}).finished;
 
@@ -169,9 +160,5 @@ export function Option(it) {
 
             update();
         }
-    }
-
-    function openExchange() {
-        it.emit('OpenExchange');
     }
 }

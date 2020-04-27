@@ -1,7 +1,6 @@
 import {scaleDown, scaleUp} from '../../effect';
 
 import {Nav} from './Nav';
-import {Exchange} from './Exchange';
 import {Setting} from './Setting';
 import {Information} from './Information';
 
@@ -10,23 +9,20 @@ const {values, assign} = Object;
 export function Menu(it) {
     const background = Background(it.getChildByName('background'));
 
-    const exchange = Exchange(it.getChildByName('exchange'));
     const setting = Setting(it.getChildByName('setting'));
     const information = Information(it.getChildByName('information'));
 
     const pages = {
-        exchange,
         setting,
         information,
     };
 
-    values(pages)
-        .forEach((page) => {
-            page.visible = false;
-            page.alpha = 0;
+    values(pages).forEach((page) => {
+        page.visible = false;
+        page.alpha = 0;
 
-            page.on('close', close);
-        });
+        page.on('close', close);
+    });
 
     let currentPage = undefined;
 
@@ -37,9 +33,10 @@ export function Menu(it) {
     return assign(it, {
         isOpen: false,
 
-        open, close,
+        open,
+        close,
 
-        ...(pages),
+        ...pages,
     });
 
     function Background(it) {
@@ -70,7 +67,8 @@ export function Menu(it) {
         }
 
         return assign(it, {
-            open, close,
+            open,
+            close,
             isOpen: false,
         });
     }
