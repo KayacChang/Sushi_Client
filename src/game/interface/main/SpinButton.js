@@ -5,7 +5,7 @@ import {throttleBy} from '@kayac/utils';
 
 const {defineProperties} = Object;
 
-import Text from 'pixi.js/lib/core/text/Text';
+import {Text} from 'pixi.js';
 
 export function SpinButton(it) {
     it = Button(it);
@@ -22,11 +22,11 @@ export function SpinButton(it) {
 
     let playing = false;
 
-    app.on('QuickStop', () => app.user.auto = 0);
+    app.on('QuickStop', () => (app.user.auto = 0));
 
     app.on('Idle', onIdle);
 
-    app.on('GameResult', ({totalWin}) => scores = totalWin);
+    app.on('GameResult', ({totalWin}) => (scores = totalWin));
 
     app.on('UserAutoChange', () => {
         originCash = app.user.cash;
@@ -96,13 +96,13 @@ export function SpinButton(it) {
         function ifCashIncreasesBy() {
             const threshold = condition['if_cash_increases_by'];
 
-            if (threshold) return (app.user.cash - originCash) >= threshold;
+            if (threshold) return app.user.cash - originCash >= threshold;
         }
 
         function ifCashDecreasesBy() {
             const threshold = condition['if_cash_decreases_by'];
 
-            if (threshold) return (originCash - app.user.cash) >= threshold;
+            if (threshold) return originCash - app.user.cash >= threshold;
         }
     }
 }
@@ -122,14 +122,13 @@ function Auto(parent) {
 
     it.position.set(x, y);
 
-    it.anchor.set(.5, .5);
+    it.anchor.set(0.5, 0.5);
 
     parent.addChild(it);
 
     let count = 0;
 
     return defineProperties(it, {
-
         count: {
             get() {
                 return count;
@@ -140,11 +139,10 @@ function Auto(parent) {
                 update();
             },
         },
-
     });
 
     function update() {
-        if (count === 0) return it.text = '';
+        if (count === 0) return (it.text = '');
 
         it.text = count;
     }
@@ -171,10 +169,7 @@ async function* State(it) {
         play.visible = false;
         stop.visible = true;
 
-        await Promise.all([
-            send(it),
-            animation(it),
-        ]);
+        await Promise.all([send(it), animation(it)]);
     }
 
     function onStop() {
@@ -193,15 +188,14 @@ async function animation(it) {
         x: {value: [0.8, 1], delay: 120},
 
         duration: 300,
-    })
-        .finished;
+    }).finished;
 }
 
 async function send(it) {
     if (insufficientBalance()) {
-        const {value} =
-            await app.alert
-                .request({title: app.translate('common:helper.insufficientBalance')});
+        const {value} = await app.alert.request({
+            title: app.translate('common:helper.insufficientBalance'),
+        });
 
         if (value) it.emit('OpenExchange');
 

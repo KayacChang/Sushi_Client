@@ -1,4 +1,4 @@
-import {BitmapText} from 'pixi.js/lib/extras';
+import {BitmapText} from 'pixi.js';
 import {fadeIn} from '../../../effect';
 import anime from 'animejs';
 
@@ -13,7 +13,7 @@ export function Text({x, y}, config) {
 
     it.position.set(x, y);
 
-    it.anchor.set(.5);
+    it.anchor.set(0.5);
 
     return assign(it, {incrementTo});
 

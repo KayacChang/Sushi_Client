@@ -32,16 +32,7 @@ const detectorOptions = {
     htmlTag: document.documentElement,
 };
 
-const backendOptions = {
-    // init option for fetch, for example
-    requestOptions: {
-        mode: 'cors',
-        credentials: 'same-origin',
-        cache: 'default',
-    },
-};
-
-function init() {
+function init(path) {
     return i18next
         .use(LanguageDetector)
         .use(Fetch)
@@ -51,9 +42,14 @@ function init() {
             fallbackLng: 'zh-TW',
 
             detection: detectorOptions,
-            backend: backendOptions,
-
-            loadPath: ENV.I18N_URL,
+            backend: {
+                requestOptions: {
+                    mode: 'cors',
+                    credentials: 'same-origin',
+                    cache: 'default',
+                },
+                loadPath: `${path}/{{lng}}/{{ns}}.json`,
+            },
 
             ns: ['sushi', 'common'],
             defaultNS: 'sushi',

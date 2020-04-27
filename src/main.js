@@ -1,37 +1,18 @@
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
-
-import {select, fetchJSON, isDevMode} from '@kayac/utils';
-
-import {App} from './system/application';
-import {Service} from './service/01';
-
+import {select} from '@kayac/utils';
+import app from './system/application';
+import {Service} from './service';
+import i18n from './system/plugin/i18n';
+import Swal from './system/plugin/swal';
 import {enableFullScreenMask} from './system/modules/screen';
-
-import ENV_URL from './env.json';
-
-const key = process.env.KEY;
 
 async function main() {
     //  Init App
     try {
         document.title = 'For Every Gamer | 61 Studio';
 
-        const res = await fetchJSON(ENV_URL);
-
-        global.ENV = {
-            SERVICE_URL:
-                isDevMode() ?
-                    res['devServerURL'] : res['prodServerURL'],
-
-            LOGIN_TYPE: res['loginType'],
-            GAME_ID: res['gameID'],
-            I18N_URL: res['i18nURL'],
-        };
-
-        global.app = await App();
-
-        app.service = new Service(key);
+        app.translate = await i18n.init(process.env.I18N_URL);
+        app.alert = Swal(app.translate);
+        app.service = new Service(process.env.SERVER_URL);
 
         // Import Load Scene
         const LoadScene = await import('./game/scenes/load/scene');
@@ -52,20 +33,20 @@ async function main() {
         await app.service.login({key});
 
         //  Import Main Scene
-        const [
-            Interface,
-            MainScene,
-            initData,
-        ] =
-            await Promise.all([
-                import('./game/interface'),
-                import('./game/scenes/main'),
-                app.service.init({key}),
-            ]);
+        const [Interface, MainScene, initData] = await Promise.all([
+            import('./game/interface'),
+            import('./game/scenes/main'),
+            app.service.init({key}),
+        ]);
 
-        await app.resource.load(
-            Interface, MainScene,
-        );
+        app.user.id = initData['player']['id'];
+        app.user.cash = initData['player']['money'];
+
+        app.user.betOptions = initData['betrate']['betrate'];
+        app.user.betOptionsHotKey = initData['betrate']['betratelinkindex'];
+        app.user.bet = initData['betrate']['betratedefaultindex'];
+
+        await app.resource.load(Interface, MainScene);
 
         const scene = MainScene.create(initData);
         const ui = Interface.create();
